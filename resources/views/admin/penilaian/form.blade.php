@@ -17,8 +17,7 @@
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
                             <li class="breadcrumb-item"><a href="{{ route('admin.penilaian.index') }}">Penilaian</a></li>
                             <li class="breadcrumb-item">
-                                <a
-                                    href="{{ route('admin.penilaian.calon-agen', $periode) }}">{{ $periode->nama_periode }}</a>
+                                <a href="{{ route('admin.penilaian.calon-agen', $periode) }}">{{ $periode->nama_periode }}</a>
                             </li>
                             <li class="breadcrumb-item active">{{ $calonAgen->nama_lengkap }}</li>
                         </ol>
@@ -73,7 +72,7 @@
 
                 {{-- Form Penilaian --}}
                 <div class="col-12">
-                    <form action="{{ route('admin.penilaian.store', [$periode, $calonAgen]) }}" method="POST">
+                    <form action="{{ route('admin.penilaian.store', [$periode, $calonAgen]) }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         @foreach ($kriterias as $index => $kriteria)
@@ -99,6 +98,7 @@
                                         </div>
                                     @endif
 
+                                    {{-- Pilihan Sub Kriteria --}}
                                     <div class="row g-2">
                                         @foreach ($kriteria->subKriteria->sortBy('nilai') as $sub)
                                             @php
@@ -132,9 +132,67 @@
                                             </div>
                                         @endforeach
                                     </div>
+
+                                    {{-- Catatan Penilaian per Kriteria --}}
+                                    <div class="mt-3 pt-3 border-top">
+                                        <label for="catatan_{{ $kriteria->id }}"
+                                            class="form-label fw-semibold text-muted small mb-1">
+                                            <i class="bi bi-pencil-square me-1"></i> Catatan Penilaian
+                                            <span class="fw-normal text-muted">(opsional, maks. 500 karakter)</span>
+                                        </label>
+                                        <textarea
+                                            name="catatan[{{ $kriteria->id }}]"
+                                            id="catatan_{{ $kriteria->id }}"
+                                            class="form-control form-control-sm @error("catatan.{$kriteria->id}") is-invalid @enderror"
+                                            rows="2"
+                                            maxlength="500"
+                                            placeholder="Tulis catatan untuk kriteria {{ $kriteria->nama_kriteria }}..."
+                                        >{{ old("catatan.{$kriteria->id}", $existingCatatan[$kriteria->id] ?? '') }}</textarea>
+                                        @error("catatan.{$kriteria->id}")
+                                            <div class="invalid-feedback">{{ $message }}</div>
+                                        @enderror
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
+
+                        {{-- Upload Form Screening --}}
+                        <div class="card mb-4 border-warning border-opacity-50">
+                            <div class="card-header d-flex align-items-center gap-2 bg-warning bg-opacity-10">
+                                <i class="bi bi-clipboard2-check-fill text-warning fs-5"></i>
+                                <div>
+                                    <h6 class="mb-0 fw-semibold">Form Screening</h6>
+                                    <small class="text-muted">Upload formulir screening calon agen (hanya terlihat oleh admin)</small>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @if ($existingFormScreening)
+                                    <div class="alert alert-success d-flex align-items-center gap-2 py-2 mb-3">
+                                        <i class="bi bi-check-circle-fill"></i>
+                                        <span>Form screening sudah diupload.</span>
+                                        <a href="{{ asset('storage/' . $existingFormScreening) }}" target="_blank"
+                                            class="btn btn-sm btn-outline-success ms-auto">
+                                            <i class="bi bi-eye me-1"></i>Lihat File
+                                        </a>
+                                    </div>
+                                @endif
+                                <div class="mb-0">
+                                    <label for="form_screening" class="form-label fw-semibold">
+                                        <i class="bi bi-upload me-1"></i>
+                                        {{ $existingFormScreening ? 'Ganti Form Screening' : 'Upload Form Screening' }}
+                                    </label>
+                                    <input type="file"
+                                        name="form_screening"
+                                        id="form_screening"
+                                        class="form-control @error('form_screening') is-invalid @enderror"
+                                        accept=".pdf,.jpg,.jpeg,.png">
+                                    <div class="form-text">Format: PDF, JPG, JPEG, PNG. Maks. 5 MB.</div>
+                                    @error('form_screening')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
 
                         {{-- Tombol aksi --}}
                         <div class="d-flex justify-content-between mt-2 mb-5">

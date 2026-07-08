@@ -20,19 +20,31 @@ class CalonAgen extends Model
         'periode_id',
         'nik',
         'nama_lengkap',
+        'nama_usaha',
         'no_hp',
-        'alamat',
+        'alamat_domisili',
+        'lat_domisili',
+        'lng_domisili',
+        'alamat_usaha',
+        'lat_usaha',
+        'lng_usaha',
         'ktp_path',
         'nib_path',
         'npwp_path',
         'formulir_pendaftaran_path',
+        'form_screening_path',
         'status',
     ];
 
     protected $casts = [
-        'id' => 'integer',
-        'periode_id' => 'integer',
+        'id'            => 'integer',
+        'periode_id'    => 'integer',
+        'lat_domisili'  => 'float',
+        'lng_domisili'  => 'float',
+        'lat_usaha'     => 'float',
+        'lng_usaha'     => 'float',
     ];
+
 
     public function isDirekomendasi(): bool
     {

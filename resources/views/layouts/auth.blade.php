@@ -14,6 +14,7 @@
     <link rel="stylesheet" crossorigin href="{{ asset('template/assets/compiled/css/app.css') }}">
     <link rel="stylesheet" crossorigin href="{{ asset('template/assets/compiled/css/app-dark.css') }}">
     <link rel="stylesheet" crossorigin href="{{ asset('template/assets/compiled/css/auth.css') }}">
+    @stack('styles')
 </head>
 
 <body>
@@ -23,6 +24,7 @@
         @yield('content')
 
     </div>
+    @stack('scripts')
 </body>
 
 </html>

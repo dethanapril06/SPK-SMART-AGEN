@@ -18,7 +18,10 @@ class StorePenilaianRequest extends FormRequest
         $rules = [];
         foreach ($kriteriaIds as $id) {
             $rules["penilaian.{$id}"] = ['required', 'exists:sub_kriteria,id'];
+            $rules["catatan.{$id}"]   = ['nullable', 'string', 'max:500'];
         }
+
+        $rules['form_screening'] = ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:5120'];
 
         return $rules;
     }

@@ -10,8 +10,9 @@ use App\Models\Penilaian;
 use App\Models\PeriodePendaftaran;
 use App\Models\SubKriteria;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\View\View;
 
 class PenilaianController extends Controller
 {
@@ -72,11 +73,20 @@ class PenilaianController extends Controller
             ->where('calon_agen_id', $calonAgen->id)
             ->pluck('sub_kriteria_id', 'kriteria_id');
 
+        // Ambil catatan yang sudah ada: [kriteria_id => catatan]
+        $existingCatatan = Penilaian::where('periode_id', $periode->id)
+            ->where('calon_agen_id', $calonAgen->id)
+            ->pluck('catatan', 'kriteria_id');
+
+        $existingFormScreening = $calonAgen->form_screening_path;
+
         return view('admin.penilaian.form', compact(
             'periode',
             'calonAgen',
             'kriterias',
-            'existingPenilaian'
+            'existingPenilaian',
+            'existingCatatan',
+            'existingFormScreening'
         ));
     }
 
@@ -89,6 +99,7 @@ class PenilaianController extends Controller
 
         foreach ($request->validated()['penilaian'] as $kriteriaId => $subKriteriaId) {
             $nilaiInput = SubKriteria::find($subKriteriaId)->nilai;
+            $catatan    = $request->input("catatan.{$kriteriaId}");
 
             Penilaian::updateOrCreate(
                 [
@@ -100,8 +111,19 @@ class PenilaianController extends Controller
                     'sub_kriteria_id' => $subKriteriaId,
                     'admin_id'        => auth()->id(),
                     'nilai_input'     => $nilaiInput,
+                    'catatan'         => $catatan ?: null,
                 ]
             );
+        }
+
+        // Upload Form Screening (opsional, hanya admin yang bisa lihat)
+        if ($request->hasFile('form_screening')) {
+            if ($calonAgen->form_screening_path) {
+                Storage::disk('public')->delete($calonAgen->form_screening_path);
+            }
+            $screeningPath = $request->file('form_screening')
+                ->store('form-screening', 'public');
+            $calonAgen->update(['form_screening_path' => $screeningPath]);
         }
 
         $calonAgen->update(['status' => 'disurvey']);

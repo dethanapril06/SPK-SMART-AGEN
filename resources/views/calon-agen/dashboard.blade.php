@@ -175,12 +175,20 @@
                                         <td>: {{ $calonAgen->nama_lengkap }}</td>
                                     </tr>
                                     <tr>
+                                        <th>Nama Usaha</th>
+                                        <td>: {{ $calonAgen->nama_usaha ?? '-' }}</td>
+                                    </tr>
+                                    <tr>
                                         <th>No HP</th>
                                         <td>: {{ $calonAgen->no_hp }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Alamat</th>
-                                        <td>: {{ $calonAgen->alamat }}</td>
+                                        <th>Alamat Domisili</th>
+                                        <td>: {{ $calonAgen->alamat_domisili }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Alamat Usaha</th>
+                                        <td>: {{ $calonAgen->alamat_usaha ?? '-' }}</td>
                                     </tr>
                                     <tr>
                                         <th>Periode</th>
@@ -326,12 +334,12 @@
                                     <div class="card-body">
                                         @if ($penilaian->isNotEmpty())
                                             <div class="table-responsive">
-                                                <table class="table table-sm table-hover mb-0">
-                                                    <thead>
+                                                <table class="table table-sm table-hover mb-0 align-middle">
+                                                    <thead class="table-light">
                                                         <tr>
                                                             <th>Kriteria</th>
-                                                            <th>Nilai</th>
-                                                            <th>Catatan</th>
+                                                            <th class="text-center">Nilai</th>
+                                                            <th>Catatan Admin</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -341,13 +349,25 @@
                                                                     <span class="badge bg-secondary me-1">
                                                                         {{ $item->kriteria->kode_kriteria ?? '-' }}
                                                                     </span>
-                                                                    {{ $item->kriteria->nama_kriteria ?? '-' }}
+                                                                    <span class="fw-medium">{{ $item->kriteria->nama_kriteria ?? '-' }}</span>
+                                                                    @if ($item->subKriteria)
+                                                                        <br><small class="text-muted">{{ $item->subKriteria->nama_sub }}</small>
+                                                                    @endif
                                                                 </td>
-                                                                <td><strong>{{ $item->nilai_input }}</strong></td>
+                                                                <td class="text-center">
+                                                                    <span class="badge bg-primary-light text-primary border fw-bold">
+                                                                        {{ $item->nilai_input }}
+                                                                    </span>
+                                                                </td>
                                                                 <td>
-                                                                    <small class="text-muted">
-                                                                        {{ $item->catatan ?: '-' }}
-                                                                    </small>
+                                                                    @if ($item->catatan)
+                                                                        <div class="d-flex align-items-start gap-1">
+                                                                            <i class="bi bi-chat-left-quote text-primary mt-1 flex-shrink-0" style="font-size:0.75rem;"></i>
+                                                                            <small class="fst-italic">{{ $item->catatan }}</small>
+                                                                        </div>
+                                                                    @else
+                                                                        <small class="text-muted">—</small>
+                                                                    @endif
                                                                 </td>
                                                             </tr>
                                                         @endforeach

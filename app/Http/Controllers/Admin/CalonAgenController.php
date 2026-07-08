@@ -41,14 +41,20 @@ class CalonAgenController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'periode_id'   => ['required', 'exists:periode_pendaftaran,id'],
-            'nik'          => ['required', 'string', 'size:16', 'unique:calon_agen,nik'],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
-            'no_hp'        => ['required', 'string', 'max:20'],
-            'alamat'       => ['required', 'string'],
-            'ktp'          => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
-            'nib'          => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
-            'npwp'         => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            'periode_id'      => ['required', 'exists:periode_pendaftaran,id'],
+            'nik'             => ['required', 'string', 'size:16', 'unique:calon_agen,nik'],
+            'nama_lengkap'    => ['required', 'string', 'max:255'],
+            'nama_usaha'      => ['nullable', 'string', 'max:255'],
+            'no_hp'           => ['required', 'string', 'max:20'],
+            'alamat_domisili' => ['required', 'string'],
+            'lat_domisili'    => ['nullable', 'numeric'],
+            'lng_domisili'    => ['nullable', 'numeric'],
+            'alamat_usaha'    => ['nullable', 'string'],
+            'lat_usaha'       => ['nullable', 'numeric'],
+            'lng_usaha'       => ['nullable', 'numeric'],
+            'ktp'             => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            'nib'             => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            'npwp'            => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
             'formulir_pendaftaran' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
         ], [
             'nik.size' => 'NIK harus terdiri dari 16 digit.',
@@ -66,14 +72,20 @@ class CalonAgenController extends Controller
         ]);
 
         CalonAgen::create([
-            'user_id' => $user->id,
-            'periode_id' => $validated['periode_id'],
-            'nik' => $validated['nik'],
-            'nama_lengkap' => $validated['nama_lengkap'],
-            'no_hp' => $validated['no_hp'],
-            'alamat' => $validated['alamat'],
+            'user_id'         => $user->id,
+            'periode_id'      => $validated['periode_id'],
+            'nik'             => $validated['nik'],
+            'nama_lengkap'    => $validated['nama_lengkap'],
+            'nama_usaha'      => $validated['nama_usaha'] ?? null,
+            'no_hp'           => $validated['no_hp'],
+            'alamat_domisili' => $validated['alamat_domisili'],
+            'lat_domisili'    => $validated['lat_domisili'] ?: null,
+            'lng_domisili'    => $validated['lng_domisili'] ?: null,
+            'alamat_usaha'    => $validated['alamat_usaha'] ?? null,
+            'lat_usaha'       => $validated['lat_usaha'] ?: null,
+            'lng_usaha'       => $validated['lng_usaha'] ?: null,
             ...$this->storeDokumen($request),
-            'status' => 'diproses',
+            'status'          => 'diproses',
         ]);
 
         return redirect()
@@ -99,24 +111,30 @@ class CalonAgenController extends Controller
     public function update(Request $request, CalonAgen $calonAgen): RedirectResponse
     {
         $validated = $request->validate([
-            'periode_id'   => ['required', 'exists:periode_pendaftaran,id'],
-            'nik'          => [
+            'periode_id'      => ['required', 'exists:periode_pendaftaran,id'],
+            'nik'             => [
                 'required',
                 'string',
                 'size:16',
                 Rule::unique('calon_agen', 'nik')->ignore($calonAgen->id),
             ],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
-            'no_hp'        => ['required', 'string', 'max:20'],
-            'alamat'       => ['required', 'string'],
-            'ktp'          => [
+            'nama_lengkap'    => ['required', 'string', 'max:255'],
+            'nama_usaha'      => ['nullable', 'string', 'max:255'],
+            'no_hp'           => ['required', 'string', 'max:20'],
+            'alamat_domisili' => ['required', 'string'],
+            'lat_domisili'    => ['nullable', 'numeric'],
+            'lng_domisili'    => ['nullable', 'numeric'],
+            'alamat_usaha'    => ['nullable', 'string'],
+            'lat_usaha'       => ['nullable', 'numeric'],
+            'lng_usaha'       => ['nullable', 'numeric'],
+            'ktp'             => [
                 Rule::requiredIf(!$calonAgen->ktp_path),
                 'file',
                 'mimes:pdf,jpg,jpeg,png',
                 'max:2048',
             ],
-            'nib'          => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
-            'npwp'         => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            'nib'             => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            'npwp'            => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
             'formulir_pendaftaran' => [
                 Rule::requiredIf(!$calonAgen->formulir_pendaftaran_path),
                 'file',
@@ -130,11 +148,17 @@ class CalonAgenController extends Controller
         ]);
 
         $calonAgen->update([
-            'periode_id' => $validated['periode_id'],
-            'nik' => $validated['nik'],
-            'nama_lengkap' => $validated['nama_lengkap'],
-            'no_hp' => $validated['no_hp'],
-            'alamat' => $validated['alamat'],
+            'periode_id'      => $validated['periode_id'],
+            'nik'             => $validated['nik'],
+            'nama_lengkap'    => $validated['nama_lengkap'],
+            'nama_usaha'      => $validated['nama_usaha'] ?? null,
+            'no_hp'           => $validated['no_hp'],
+            'alamat_domisili' => $validated['alamat_domisili'],
+            'lat_domisili'    => $validated['lat_domisili'] ?: null,
+            'lng_domisili'    => $validated['lng_domisili'] ?: null,
+            'alamat_usaha'    => $validated['alamat_usaha'] ?? null,
+            'lat_usaha'       => $validated['lat_usaha'] ?: null,
+            'lng_usaha'       => $validated['lng_usaha'] ?: null,
             ...$this->updateDokumen($request, $calonAgen),
         ]);
 

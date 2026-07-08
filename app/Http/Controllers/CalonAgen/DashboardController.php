@@ -12,7 +12,7 @@ use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(): View
     {
         $user = Auth::user();
         $user->load('calonAgen.periode');
@@ -31,7 +31,7 @@ class DashboardController extends Controller
             $hasilSmart = $calonAgen->hasilSmart;
 
             $penilaian = $calonAgen->penilaian()
-                ->with('kriteria')
+                ->with(['kriteria', 'subKriteria'])
                 ->get();
         }
 
@@ -39,14 +39,14 @@ class DashboardController extends Controller
             'calonAgen',
             'notifikasiTerbaru',
             'hasilSmart',
-            'penilaian',
+            'penilaian'
         ));
     }
 
     public function updateDokumen(Request $request): RedirectResponse
     {
         $request->validate([
-            'nib' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            'nib'  => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
             'npwp' => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
         ]);
 
@@ -68,7 +68,6 @@ class DashboardController extends Controller
             if ($calonAgen->nib_path) {
                 Storage::disk('public')->delete($calonAgen->nib_path);
             }
-
             $data['nib_path'] = $request->file('nib')->store('dokumen-calon-agen/nib', 'public');
         }
 
@@ -76,7 +75,6 @@ class DashboardController extends Controller
             if ($calonAgen->npwp_path) {
                 Storage::disk('public')->delete($calonAgen->npwp_path);
             }
-
             $data['npwp_path'] = $request->file('npwp')->store('dokumen-calon-agen/npwp', 'public');
         }
 

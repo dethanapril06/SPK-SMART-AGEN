@@ -53,16 +53,22 @@ class AuthController extends Controller
     public function register(Request $request): RedirectResponse
     {
         $request->validate([
-            'name'         => ['required', 'string', 'max:255'],
-            'email'        => ['required', 'email', 'unique:users,email'],
-            'password'     => ['required', 'string', 'min:8', 'confirmed'],
-            'nik'          => ['required', 'string', 'size:16', 'unique:calon_agen,nik'],
-            'nama_lengkap' => ['required', 'string', 'max:255'],
-            'no_hp'        => ['required', 'string', 'max:20'],
-            'alamat'       => ['required', 'string'],
-            'ktp'          => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
-            'nib'          => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
-            'npwp'         => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            'name'             => ['required', 'string', 'max:255'],
+            'email'            => ['required', 'email', 'unique:users,email'],
+            'password'         => ['required', 'string', 'min:8', 'confirmed'],
+            'nik'              => ['required', 'string', 'size:16', 'unique:calon_agen,nik'],
+            'nama_lengkap'     => ['required', 'string', 'max:255'],
+            'nama_usaha'       => ['nullable', 'string', 'max:255'],
+            'no_hp'            => ['required', 'string', 'max:20'],
+            'alamat_domisili'  => ['required', 'string'],
+            'lat_domisili'     => ['nullable', 'numeric'],
+            'lng_domisili'     => ['nullable', 'numeric'],
+            'alamat_usaha'     => ['nullable', 'string'],
+            'lat_usaha'        => ['nullable', 'numeric'],
+            'lng_usaha'        => ['nullable', 'numeric'],
+            'ktp'              => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            'nib'              => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
+            'npwp'             => ['nullable', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
             'formulir_pendaftaran' => ['required', 'file', 'mimes:pdf,jpg,jpeg,png', 'max:2048'],
         ], [
             'nik.size'          => 'NIK harus terdiri dari 16 digit.',
@@ -102,14 +108,20 @@ class AuthController extends Controller
 
         // Buat data calon agen
         CalonAgen::create([
-            'user_id'      => $user->id,
-            'periode_id'   => $periode->id,
-            'nik'          => $request->nik,
-            'nama_lengkap' => $request->nama_lengkap,
-            'no_hp'        => $request->no_hp,
-            'alamat'       => $request->alamat,
+            'user_id'         => $user->id,
+            'periode_id'      => $periode->id,
+            'nik'             => $request->nik,
+            'nama_lengkap'    => $request->nama_lengkap,
+            'nama_usaha'      => $request->nama_usaha,
+            'no_hp'           => $request->no_hp,
+            'alamat_domisili' => $request->alamat_domisili,
+            'lat_domisili'    => $request->lat_domisili ?: null,
+            'lng_domisili'    => $request->lng_domisili ?: null,
+            'alamat_usaha'    => $request->alamat_usaha,
+            'lat_usaha'       => $request->lat_usaha ?: null,
+            'lng_usaha'       => $request->lng_usaha ?: null,
             ...$dokumen,
-            'status'       => 'diproses',
+            'status'          => 'diproses',
         ]);
 
         Auth::login($user);
