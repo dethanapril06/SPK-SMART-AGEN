@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama_kriteria');
             $table->string('kode_kriteria', 10)->unique();
-            $table->float('bobot');
+            $table->integer('bobot');
             $table->enum('tipe', ['benefit', 'cost']); 
             $table->foreignId('created_by')->constrained('users')->restrictOnDelete();
             $table->timestamps();

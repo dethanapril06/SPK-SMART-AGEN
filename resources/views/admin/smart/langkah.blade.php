@@ -52,7 +52,7 @@
                                 <tr>
                                     <th class="text-start">Kriteria</th>
                                     <th>Tipe</th>
-                                    <th>Bobot (1-10)</th>
+                                    <th>Bobot (1-5)</th>
                                     <th>Total Bobot</th>
                                     <th>Bobot Normal (W<sub>j</sub>)</th>
                                 </tr>

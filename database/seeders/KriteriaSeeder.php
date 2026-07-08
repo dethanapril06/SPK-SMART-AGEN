@@ -20,28 +20,28 @@ class KriteriaSeeder extends Seeder
                 'kode_kriteria' => 'C1',
                 'nama_kriteria' => 'Kelengkapan Administratif',
                 'tipe'          => 'benefit',
-                'bobot'         => 2,
+                'bobot'         => 4,
                 'created_by'    => $admin->id,
             ],
             [
                 'kode_kriteria' => 'C2',
                 'nama_kriteria' => 'Lokasi Usaha',
                 'tipe'          => 'benefit',
-                'bobot'         => 2,
+                'bobot'         => 4,
                 'created_by'    => $admin->id,
             ],
             [
                 'kode_kriteria' => 'C3',
                 'nama_kriteria' => 'Riwayat Kredit',
                 'tipe'          => 'cost',
-                'bobot'         => 1.7,
+                'bobot'         => 3,
                 'created_by'    => $admin->id,
             ],
             [
                 'kode_kriteria' => 'C4',
                 'nama_kriteria' => 'Komitmen Berusaha',
                 'tipe'          => 'benefit',
-                'bobot'         => 2,
+                'bobot'         => 4,
                 'created_by'    => $admin->id,
             ],
             [
@@ -55,13 +55,13 @@ class KriteriaSeeder extends Seeder
                 'kode_kriteria' => 'C6',
                 'nama_kriteria' => 'Ketersediaan Sarana Pendukung',
                 'tipe'          => 'benefit',
-                'bobot'         => 1.3,
+                'bobot'         => 2,
                 'created_by'    => $admin->id,
             ],
         ];
  
         foreach ($kriterias as $kriteria) {
-            Kriteria::firstOrCreate(
+            Kriteria::updateOrCreate(
                 ['kode_kriteria' => $kriteria['kode_kriteria']],
                 $kriteria
             );

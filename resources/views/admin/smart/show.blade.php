@@ -186,7 +186,7 @@
                                         <th>Kode</th>
                                         <th>Nama Kriteria</th>
                                         <th class="text-center">Tipe</th>
-                                        <th class="text-center">Bobot (1-10)</th>
+                                        <th class="text-center">Bobot (1-5)</th>
                                         <th class="text-center">Bobot Normal</th>
                                     </tr>
                                 </thead>
