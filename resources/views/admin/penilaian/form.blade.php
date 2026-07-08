@@ -88,7 +88,7 @@
                                             class="badge {{ $kriteria->tipe === 'benefit' ? 'bg-success-light text-success' : 'bg-danger-light text-danger' }} border">
                                             {{ ucfirst($kriteria->tipe) }}
                                         </span>
-                                        <span class="badge bg-light text-dark border">Bobot: {{ $kriteria->bobot }}%</span>
+                                        <span class="badge bg-light text-dark border">Bobot: {{ $kriteria->bobot }}</span>
                                     </div>
                                 </div>
                                 <div class="card-body">

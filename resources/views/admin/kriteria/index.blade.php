@@ -68,7 +68,7 @@
                                         <td>{{ $loop->iteration }}</td>
                                         <td><span class="badge bg-secondary">{{ $item->kode_kriteria }}</span></td>
                                         <td>{{ $item->nama_kriteria }}</td>
-                                        <td>{{ $item->bobot }}%</td>
+                                        <td>{{ $item->bobot }}</td>
                                         <td>
                                             <span class="badge bg-{{ $item->isBenefit() ? 'success' : 'danger' }}">
                                                 {{ ucfirst($item->tipe) }}

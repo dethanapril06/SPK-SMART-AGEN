@@ -54,7 +54,7 @@
                                 </tr>
                                 <tr>
                                     <th>Bobot</th>
-                                    <td>: {{ $kriteria->bobot }}%</td>
+                                    <td>: {{ $kriteria->bobot }}</td>
                                 </tr>
                                 <tr>
                                     <th>Tipe</th>

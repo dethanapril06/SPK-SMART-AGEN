@@ -81,10 +81,10 @@
 
                                     <div class="col-md-6 col-12">
                                         <div class="form-group">
-                                            <label for="bobot">Bobot (%)</label>
+                                            <label for="bobot">Bobot (Skala 1-10)</label>
                                             <input type="number" class="form-control @error('bobot') is-invalid @enderror"
-                                                placeholder="Contoh: 25" id="bobot" name="bobot"
-                                                value="{{ old('bobot', $kriteria->bobot) }}" min="0" max="100"
+                                                placeholder="Contoh: 8" id="bobot" name="bobot"
+                                                value="{{ old('bobot', $kriteria->bobot) }}" min="1" max="10"
                                                 step="0.01" required>
                                             @error('bobot')
                                                 <div class="invalid-feedback">{{ $message }}</div>

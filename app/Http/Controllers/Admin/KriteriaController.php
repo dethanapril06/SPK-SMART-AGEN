@@ -28,7 +28,7 @@ class KriteriaController extends Controller
         $validated = $request->validate([
             'nama_kriteria' => ['required', 'string', 'max:255'],
             'kode_kriteria' => ['required', 'string', 'max:10', 'unique:kriteria,kode_kriteria'],
-            'bobot'         => ['required', 'numeric', 'min:0', 'max:100'],
+            'bobot'         => ['required', 'numeric', 'min:1', 'max:10'],
             'tipe'          => ['required', Rule::in(['benefit', 'cost'])],
         ], [
             'nama_kriteria.required' => 'Nama kriteria wajib diisi.',
@@ -36,6 +36,8 @@ class KriteriaController extends Controller
             'kode_kriteria.unique'   => 'Kode kriteria sudah digunakan.',
             'bobot.required'         => 'Bobot wajib diisi.',
             'bobot.numeric'          => 'Bobot harus berupa angka.',
+            'bobot.min'              => 'Bobot minimal bernilai 1.',
+            'bobot.max'              => 'Bobot maksimal bernilai 10.',
             'tipe.required'          => 'Tipe wajib dipilih.',
             'tipe.in'                => 'Tipe tidak valid.',
         ]);
@@ -67,7 +69,7 @@ class KriteriaController extends Controller
         $validated = $request->validate([
             'nama_kriteria' => ['required', 'string', 'max:255'],
             'kode_kriteria' => ['required', 'string', 'max:10', Rule::unique('kriteria', 'kode_kriteria')->ignore($kriteria->id)],
-            'bobot'         => ['required', 'numeric', 'min:0', 'max:100'],
+            'bobot'         => ['required', 'numeric', 'min:1', 'max:10'],
             'tipe'          => ['required', Rule::in(['benefit', 'cost'])],
         ], [
             'nama_kriteria.required' => 'Nama kriteria wajib diisi.',
@@ -75,6 +77,8 @@ class KriteriaController extends Controller
             'kode_kriteria.unique'   => 'Kode kriteria sudah digunakan.',
             'bobot.required'         => 'Bobot wajib diisi.',
             'bobot.numeric'          => 'Bobot harus berupa angka.',
+            'bobot.min'              => 'Bobot minimal bernilai 1.',
+            'bobot.max'              => 'Bobot maksimal bernilai 10.',
             'tipe.required'          => 'Tipe wajib dipilih.',
             'tipe.in'                => 'Tipe tidak valid.',
         ]);

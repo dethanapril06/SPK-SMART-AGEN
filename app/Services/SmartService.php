@@ -29,6 +29,10 @@ class SmartService
         $kriterias    = Kriteria::all();
         $totalBobot   = $kriterias->sum('bobot');
 
+        if ($kriterias->isEmpty() || $totalBobot <= 0) {
+            return collect();
+        }
+
         $bobotNormal  = $kriterias->mapWithKeys(fn ($k) => [
             $k->id => $k->bobot / $totalBobot,
         ]);
@@ -220,7 +224,7 @@ class SmartService
         $totalBobot = $kriterias->sum('bobot');
 
         $bobotNormal = $kriterias->mapWithKeys(fn($k) => [
-            $k->id => $k->bobot / $totalBobot,
+            $k->id => $totalBobot > 0 ? $k->bobot / $totalBobot : 0,
         ]);
 
         // Ambil hasil SMART yang sudah tersimpan, urutkan by peringkat

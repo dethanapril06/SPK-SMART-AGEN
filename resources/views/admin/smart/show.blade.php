@@ -117,7 +117,7 @@
                                             <th class="text-center">
                                                 {{ $k->kode_kriteria }}
                                                 <br>
-                                                <small class="text-muted fw-normal">{{ $k->bobot }}%</small>
+                                                <small class="text-muted fw-normal">{{ $k->bobot }}</small>
                                             </th>
                                         @endforeach
                                         <th class="text-center">Skor Akhir</th>
@@ -186,7 +186,7 @@
                                         <th>Kode</th>
                                         <th>Nama Kriteria</th>
                                         <th class="text-center">Tipe</th>
-                                        <th class="text-center">Bobot (%)</th>
+                                        <th class="text-center">Bobot (1-10)</th>
                                         <th class="text-center">Bobot Normal</th>
                                     </tr>
                                 </thead>
@@ -202,13 +202,13 @@
                                                     {{ ucfirst($k->tipe) }}
                                                 </span>
                                             </td>
-                                            <td class="text-center">{{ $k->bobot }}%</td>
+                                            <td class="text-center">{{ $k->bobot }}</td>
                                             <td class="text-center">{{ number_format($k->bobot / $totalBobot, 4) }}</td>
                                         </tr>
                                     @endforeach
                                     <tr class="fw-bold">
                                         <td colspan="3" class="text-end">Total</td>
-                                        <td class="text-center">{{ $kriterias->sum('bobot') }}%</td>
+                                        <td class="text-center">{{ $kriterias->sum('bobot') }}</td>
                                         <td class="text-center">1.0000</td>
                                     </tr>
                                 </tbody>
