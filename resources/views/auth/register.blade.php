@@ -98,7 +98,7 @@
                         <div class="form-group position-relative has-icon-left mb-4">
                             <input type="text" name="nama_lengkap" id="nama_lengkap"
                                 class="form-control form-control-xl @error('nama_lengkap') is-invalid @enderror"
-                                placeholder="Nama Lengkap" value="{{ old('nama_lengkap') }}" required>
+                                placeholder="Nama Pemilik" value="{{ old('nama_lengkap') }}" required>
                             <div class="form-control-icon"><i class="bi bi-person-badge"></i></div>
                             @error('nama_lengkap')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>

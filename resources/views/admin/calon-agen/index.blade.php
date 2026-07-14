@@ -81,7 +81,7 @@
                                 </option>
                                 <option value="direkomendasi" {{ request('status') === 'direkomendasi' ? 'selected' : '' }}>Direkomendasi
                                 </option>
-                                <option value="belum direkomendasi" {{ request('status') === 'belum direkomendasi' ? 'selected' : '' }}>Belum Direkomendasi
+                                <option value="belumdirekomendasi" {{ request('status') === 'belumdirekomendasi' ? 'selected' : '' }}>Belum Direkomendasi
                                 </option>
                             </select>
                         </div>
@@ -100,7 +100,8 @@
                             <thead>
                                 <tr>
                                     <th>No</th>
-                                    <th>Nama Lengkap</th>
+                                    <th>Nama Usaha</th>
+                                    <th>Nama Pemilik</th>
                                     <th>NIK</th>
                                     <th>No HP</th>
                                     <th>Periode</th>
@@ -112,6 +113,7 @@
                                 @forelse ($calonAgens as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
+                                        <td>{{ $item->nama_usaha ?? '-' }}</td>
                                         <td>{{ $item->nama_lengkap }}</td>
                                         <td>{{ $item->nik }}</td>
                                         <td>{{ $item->no_hp }}</td>
@@ -164,7 +166,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center">Belum ada data calon agen.</td>
+                                        <td colspan="8" class="text-center">Belum ada data calon agen.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

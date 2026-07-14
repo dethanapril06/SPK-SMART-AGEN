@@ -14,7 +14,7 @@
         <thead>
             <tr>
                 <th class="text-center">Peringkat</th>
-                <th>Nama Lengkap</th>
+                <th>Nama Pemilik</th>
                 <th>NIK</th>
                 <th class="text-center">Skor Akhir</th>
                 <th class="text-center">Keputusan</th>

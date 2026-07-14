@@ -54,7 +54,7 @@
                         @csrf
 
                         <div class="alert alert-light-info color-info">
-                            Akun calon agen akan dibuat otomatis. Email login dibuat dari nama lengkap, password default:
+                            Akun calon agen akan dibuat otomatis. Email login dibuat dari nama pemilik, password default:
                             <strong>password</strong>.
                         </div>
 
@@ -86,7 +86,7 @@
                                 @enderror
                             </div>
                             <div class="col-md-6 mb-3">
-                                <label for="nama_lengkap" class="form-label">Nama Lengkap</label>
+                                <label for="nama_lengkap" class="form-label">Nama Pemilik</label>
                                 <input type="text" name="nama_lengkap" id="nama_lengkap"
                                     class="form-control @error('nama_lengkap') is-invalid @enderror"
                                     value="{{ old('nama_lengkap') }}" required>

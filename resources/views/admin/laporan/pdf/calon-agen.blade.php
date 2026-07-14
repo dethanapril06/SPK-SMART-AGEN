@@ -14,7 +14,7 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Nama Lengkap</th>
+                <th>Nama Pemilik</th>
                 <th>NIK</th>
                 <th>No HP</th>
                 <th>Alamat</th>

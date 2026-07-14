@@ -171,7 +171,7 @@
                                         <td>: {{ $calonAgen->nik }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Nama Lengkap</th>
+                                        <th>Nama Pemilik</th>
                                         <td>: {{ $calonAgen->nama_lengkap }}</td>
                                     </tr>
                                     <tr>

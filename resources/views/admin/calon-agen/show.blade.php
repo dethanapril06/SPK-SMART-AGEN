@@ -61,7 +61,7 @@
                                 <div class="col-md-6 col-12">
                                     <table class="table table-borderless">
                                         <tr>
-                                            <th width="40%">Nama Lengkap</th>
+                                            <th width="40%">Nama Pemilik</th>
                                             <td>: {{ $calonAgen->nama_lengkap }}</td>
                                         </tr>
                                         <tr>
