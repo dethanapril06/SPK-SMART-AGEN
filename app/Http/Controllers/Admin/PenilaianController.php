@@ -130,6 +130,6 @@ class PenilaianController extends Controller
 
         return redirect()
             ->route('admin.penilaian.calon-agen', $periode)
-            ->with('success', "Penilaian untuk {$calonAgen->nama_lengkap} berhasil disimpan.");
+            ->with('success', 'Penilaian untuk ' . ($calonAgen->nama_usaha ?? '-') . ' berhasil disimpan.');
     }
 }

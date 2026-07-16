@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-@section('title', 'Penilaian - ' . $calonAgen->nama_lengkap)
+@section('title', 'Penilaian - ' . ($calonAgen->nama_usaha ?? '-'))
 
 @section('content')
     <div class="page-heading">
@@ -8,7 +8,7 @@
             <div class="row">
                 <div class="col-12 col-md-6 order-md-1 order-last">
                     <h3>Form Penilaian</h3>
-                    <p class="text-subtitle text-muted">{{ $calonAgen->nama_lengkap }} &mdash; {{ $periode->nama_periode }}
+                    <p class="text-subtitle text-muted">{{ $calonAgen->nama_usaha ?? '-' }} &mdash; {{ $periode->nama_periode }}
                     </p>
                 </div>
                 <div class="col-12 col-md-6 order-md-2 order-first">
@@ -19,7 +19,7 @@
                             <li class="breadcrumb-item">
                                 <a href="{{ route('admin.penilaian.calon-agen', $periode) }}">{{ $periode->nama_periode }}</a>
                             </li>
-                            <li class="breadcrumb-item active">{{ $calonAgen->nama_lengkap }}</li>
+                            <li class="breadcrumb-item active">{{ $calonAgen->nama_usaha ?? '-' }}</li>
                         </ol>
                     </nav>
                 </div>
@@ -36,12 +36,12 @@
                             <div class="row align-items-center">
                                 <div class="col-auto">
                                     <div class="avatar avatar-lg">
-                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($calonAgen->nama_lengkap) }}&background=ffffff&color=435ebe&size=64&bold=true&font-size=0.4"
-                                            alt="{{ $calonAgen->nama_lengkap }}" class="rounded-circle">
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($calonAgen->nama_usaha ?? '-') }}&background=ffffff&color=435ebe&size=64&bold=true&font-size=0.4"
+                                            alt="{{ $calonAgen->nama_usaha ?? '-' }}" class="rounded-circle">
                                     </div>
                                 </div>
                                 <div class="col">
-                                    <h5 class="mb-0 text-white">{{ $calonAgen->nama_lengkap }}</h5>
+                                    <h5 class="mb-0 text-white">{{ $calonAgen->nama_usaha ?? '-' }}</h5>
                                     <small class="opacity-75">NIK: {{ $calonAgen->nik }} &nbsp;|&nbsp;
                                         {{ $calonAgen->no_hp }}</small>
                                 </div>

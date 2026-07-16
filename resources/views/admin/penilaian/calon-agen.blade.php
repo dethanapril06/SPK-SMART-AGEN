@@ -1,13 +1,13 @@
 @extends('layouts.admin')
 
-@section('title', 'Daftar Calon Agen - ' . $periode->nama_periode)
+@section('title', 'Daftar Nama Usaha - ' . $periode->nama_periode)
 
 @section('content')
     <div class="page-heading">
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-6 order-md-1 order-last">
-                    <h3>Calon Agen</h3>
+                    <h3>Nama Usaha</h3>
                     <p class="text-subtitle text-muted">{{ $periode->nama_periode }}</p>
                 </div>
                 <div class="col-12 col-md-6 order-md-2 order-first">
@@ -43,7 +43,7 @@
                 <div class="col-12">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Daftar Calon Agen</h5>
+                            <h5 class="card-title mb-0">Daftar Nama Usaha</h5>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -51,7 +51,7 @@
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>Nama Pemilik</th>
+                                            <th>Nama Usaha</th>
                                             <th>NIK</th>
                                             <th>No. HP</th>
                                             <th>Status Pendaftaran</th>
@@ -63,7 +63,7 @@
                                         @forelse ($calonAgens as $i => $ca)
                                             <tr>
                                                 <td>{{ $i + 1 }}</td>
-                                                <td>{{ $ca->nama_lengkap }}</td>
+                                                <td>{{ $ca->nama_usaha ?? '-' }}</td>
                                                 <td><code>{{ $ca->nik }}</code></td>
                                                 <td>{{ $ca->no_hp }}</td>
                                                 <td>
