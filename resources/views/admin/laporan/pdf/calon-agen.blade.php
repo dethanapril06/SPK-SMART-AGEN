@@ -14,7 +14,7 @@
         <thead>
             <tr>
                 <th>No</th>
-                <th>Nama Pemilik</th>
+                <th>Nama Usaha</th>
                 <th>NIK</th>
                 <th>No HP</th>
                 <th>Alamat</th>
@@ -27,7 +27,7 @@
             @forelse ($calonAgens as $i => $item)
                 <tr>
                     <td>{{ $i + 1 }}</td>
-                    <td>{{ $item->nama_lengkap }}</td>
+                    <td>{{ $item->nama_usaha ?? '-' }}</td>
                     <td>{{ $item->nik }}</td>
                     <td>{{ $item->no_hp }}</td>
                     <td>{{ $item->alamat }}</td>

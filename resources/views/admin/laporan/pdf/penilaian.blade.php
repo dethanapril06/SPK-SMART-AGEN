@@ -5,13 +5,13 @@
     <div class="info-box">
         Periode: <span>{{ $periode->nama_periode }}</span>
         &nbsp;&nbsp;|&nbsp;&nbsp;
-        Total Calon Agen Dinilai: <span>{{ $penilaians->count() }}</span>
+        Total Usaha Dinilai: <span>{{ $penilaians->count() }}</span>
     </div>
 
     @forelse ($penilaians as $calonAgenId => $nilais)
         @php $calon = $nilais->first()->calonAgen; @endphp
         <p style="font-weight:bold; margin: 10px 0 4px;">
-            {{ $calon->nama_lengkap }} — <span style="color:#666; font-weight:normal;">NIK: {{ $calon->nik }}</span>
+            {{ $calon->nama_usaha ?? '-' }} - <span style="color:#666; font-weight:normal;">NIK: {{ $calon->nik }}</span>
         </p>
         <table>
             <thead>

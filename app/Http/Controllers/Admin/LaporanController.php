@@ -52,7 +52,7 @@ class LaporanController extends Controller
         $calonAgens = CalonAgen::with(['user', 'periode'])
             ->when($request->periode_id, fn($q) => $q->where('periode_id', $request->periode_id))
             ->when($request->status, fn($q) => $q->where('status', $request->status))
-            ->orderBy('nama_lengkap')
+            ->orderBy('nama_usaha')
             ->get();
 
         $pdf = Pdf::loadView('admin.laporan.pdf.calon-agen', compact('calonAgens', 'periode', 'request'))

@@ -14,7 +14,7 @@
         <thead>
             <tr>
                 <th class="text-center">Peringkat</th>
-                <th>Nama Pemilik</th>
+                <th>Nama Usaha</th>
                 <th>NIK</th>
                 <th class="text-center">Skor Akhir</th>
                 <th class="text-center">Keputusan</th>
@@ -27,7 +27,7 @@
                     <td class="text-center">
                         <span class="badge badge-info">#{{ $item->peringkat }}</span>
                     </td>
-                    <td>{{ $item->calonAgen->nama_lengkap ?? '-' }}</td>
+                    <td>{{ $item->calonAgen->nama_usaha ?? '-' }}</td>
                     <td>{{ $item->calonAgen->nik ?? '-' }}</td>
                     <td class="text-center"><strong>{{ number_format($item->skor_akhir, 4) }}</strong></td>
                     <td class="text-center">
