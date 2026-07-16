@@ -102,7 +102,7 @@
                         <table class="table table-bordered table-sm text-center">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="text-start">Calon Agen</th>
+                                    <th class="text-start">Nama Usaha</th>
                                     @foreach ($kriterias as $k)
                                         <th>{{ $k->kode_kriteria }}</th>
                                     @endforeach
@@ -153,7 +153,7 @@
                         <table class="table table-bordered table-sm text-center">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="text-start">Calon Agen</th>
+                                    <th class="text-start">Nama Usaha</th>
                                     @foreach ($kriterias as $k)
                                         <th>
                                             {{ $k->kode_kriteria }}
@@ -194,7 +194,7 @@
                         <table class="table table-bordered table-sm text-center">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="text-start">Calon Agen</th>
+                                    <th class="text-start">Nama Usaha</th>
                                     @foreach ($kriterias as $k)
                                         <th>
                                             {{ $k->kode_kriteria }}
@@ -242,7 +242,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Peringkat</th>
-                                    <th class="text-start">Calon Agen</th>
+                                    <th class="text-start">Nama Usaha</th>
                                     @foreach ($kriterias as $k)
                                         <th>{{ $k->kode_kriteria }}</th>
                                     @endforeach

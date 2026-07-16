@@ -274,7 +274,7 @@ class SmartService
             }
 
             $calonAgens[] = [
-                'nama'         => $ca->nama_lengkap,
+                'nama'         => $ca->nama_usaha ?? '-',
                 'nilai_asli'   => $nilaiMatrix[$ca->id] ?? [],
                 'nilai_normal' => $nilaiNormal,
                 'skor_akhir'   => $h->skor_akhir,

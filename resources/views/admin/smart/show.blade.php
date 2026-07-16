@@ -112,7 +112,7 @@
                                 <thead>
                                     <tr>
                                         <th>Peringkat</th>
-                                        <th>Nama Calon Agen</th>
+                                        <th>Nama Usaha</th>
                                         @foreach ($kriterias as $k)
                                             <th class="text-center">
                                                 {{ $k->kode_kriteria }}
@@ -137,7 +137,7 @@
                                                     <span class="text-muted">#{{ $h->peringkat }}</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $h->calonAgen->nama_lengkap }}</td>
+                                            <td>{{ $h->calonAgen->nama_usaha ?? '-' }}</td>
                                             @foreach ($kriterias as $k)
                                                 @php
                                                     $nilaiCa =
