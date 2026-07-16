@@ -112,7 +112,7 @@
                                 <thead>
                                     <tr>
                                         <th>Peringkat</th>
-                                        <th>Nama Usaha</th>
+                                        <th>Calon Agen</th>
                                         @foreach ($kriterias as $k)
                                             <th class="text-center">
                                                 {{ $k->kode_kriteria }}
