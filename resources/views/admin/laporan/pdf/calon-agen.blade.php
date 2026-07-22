@@ -30,7 +30,7 @@
                     <td>{{ $item->nama_usaha ?? '-' }}</td>
                     <td>{{ $item->nik }}</td>
                     <td>{{ $item->no_hp }}</td>
-                    <td>{{ $item->alamat }}</td>
+                    <td>{{ $item->alamat_domisili }}</td>
                     <td>{{ $item->periode->nama_periode ?? '-' }}</td>
                     <td>
                         @php $badgeMap = ['direkomendasi' => 'success', 'belumdirekomendasi' => 'danger', 'disurvey' => 'info', 'diproses' => 'warning']; @endphp

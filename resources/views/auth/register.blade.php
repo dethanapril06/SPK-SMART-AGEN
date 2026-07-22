@@ -116,9 +116,9 @@
                         </div>
 
                         <div class="form-group position-relative has-icon-left mb-4">
-                            <input type="text" name="no_hp" id="no_hp"
+                            <input type="number" name="no_hp" id="no_hp"
                                 class="form-control form-control-xl @error('no_hp') is-invalid @enderror"
-                                placeholder="Nomor HP" value="{{ old('no_hp') }}" maxlength="20" required>
+                                placeholder="Nomor HP" value="{{ old('no_hp') }}" maxlength="12" required>
                             <div class="form-control-icon"><i class="bi bi-telephone"></i></div>
                             @error('no_hp')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
