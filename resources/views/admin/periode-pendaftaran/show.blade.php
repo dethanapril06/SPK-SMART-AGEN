@@ -61,6 +61,10 @@
                                             <td>: {{ $periodePendaftaran->tanggal_tutup->format('d/m/Y') }}</td>
                                         </tr>
                                         <tr>
+                                            <th>Jumlah Kuota Diterima</th>
+                                            <td>: <span class="badge bg-primary"><i class="bi bi-people-fill me-1"></i>{{ $periodePendaftaran->kuota ?? 0 }} Calon Agen</span></td>
+                                        </tr>
+                                        <tr>
                                             <th>Status</th>
                                             <td>:
                                                 @php
@@ -91,20 +95,28 @@
                                 </div>
 
                                 <div class="col-md-6 col-12">
-                                    <div class="row text-center">
-                                        <div class="col-6">
-                                            <div class="card bg-light-primary shadow-none">
+                                    <div class="row text-center g-2">
+                                        <div class="col-4">
+                                            <div class="card bg-light-primary shadow-none border">
                                                 <div class="card-body py-3">
-                                                    <h3 class="mb-0">{{ $periodePendaftaran->calonAgen->count() }}</h3>
-                                                    <small class="text-muted">Calon Agen</small>
+                                                    <h3 class="mb-0 text-primary">{{ $periodePendaftaran->kuota ?? 0 }}</h3>
+                                                    <small class="text-muted fw-semibold">Kuota Diterima</small>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-6">
-                                            <div class="card bg-light-success shadow-none">
+                                        <div class="col-4">
+                                            <div class="card bg-light-info shadow-none border">
+                                                <div class="card-body py-3">
+                                                    <h3 class="mb-0">{{ $periodePendaftaran->calonAgen->count() }}</h3>
+                                                    <small class="text-muted fw-semibold">Pendaftar</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-4">
+                                            <div class="card bg-light-success shadow-none border">
                                                 <div class="card-body py-3">
                                                     <h3 class="mb-0">{{ $periodePendaftaran->penilaian->count() }}</h3>
-                                                    <small class="text-muted">Penilaian</small>
+                                                    <small class="text-muted fw-semibold">Penilaian</small>
                                                 </div>
                                             </div>
                                         </div>

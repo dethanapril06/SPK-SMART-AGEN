@@ -54,9 +54,9 @@
                         <div class="col-md-3 col-12">
                             <select name="role" class="form-select">
                                 <option value="">-- Semua Role --</option>
-                                <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin</option>
-                                <option value="calon_agen" {{ request('role') === 'calon_agen' ? 'selected' : '' }}>Calon
-                                    Agen</option>
+                                <option value="admin" {{ request('role') === 'admin' ? 'selected' : '' }}>Admin Pengelola</option>
+                                <option value="petugas_survey" {{ request('role') === 'petugas_survey' ? 'selected' : '' }}>Petugas Survey</option>
+                                <option value="calon_agen" {{ request('role') === 'calon_agen' ? 'selected' : '' }}>Calon Agen</option>
                             </select>
                         </div>
                         <div class="col-md-4 col-12">
@@ -80,7 +80,7 @@
                                     <th>No</th>
                                     <th>Nama</th>
                                     <th>Email</th>
-                                    <th>Role</th>
+                                    <th>Role & Status</th>
                                     <th>Dibuat Pada</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -100,9 +100,21 @@
                                         </td>
                                         <td>{{ $item->email }}</td>
                                         <td>
-                                            <span class="badge bg-{{ $item->role === 'admin' ? 'primary' : 'secondary' }}">
-                                                {{ $item->role === 'admin' ? 'Admin' : 'Calon Agen' }}
-                                            </span>
+                                            @if ($item->role === 'admin')
+                                                <span class="badge bg-primary">Admin Pengelola</span>
+                                            @elseif ($item->role === 'petugas_survey')
+                                                <span class="badge bg-warning text-dark">Petugas Survey</span>
+                                            @else
+                                                <span class="badge bg-secondary">Calon Agen</span>
+                                            @endif
+
+                                            <div class="mt-1">
+                                                @if ($item->hasVerifiedEmail())
+                                                    <span class="badge bg-light-success text-success" style="font-size: 0.72rem;"><i class="bi bi-check-circle"></i> Terverifikasi</span>
+                                                @else
+                                                    <span class="badge bg-light-danger text-danger" style="font-size: 0.72rem;"><i class="bi bi-x-circle"></i> Belum Verifikasi</span>
+                                                @endif
+                                            </div>
                                         </td>
                                         <td>{{ $item->created_at->format('d/m/Y') }}</td>
                                         <td>
@@ -111,6 +123,15 @@
                                                     class="btn btn-sm btn-outline-warning" title="Edit">
                                                     <i class="bi bi-pencil-square"></i>
                                                 </a>
+
+                                                @if (!$item->hasVerifiedEmail())
+                                                    <form action="{{ route('admin.user.resend-verification', $item) }}" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-outline-success" title="Kirim Ulang Link Verifikasi Email">
+                                                            <i class="bi bi-envelope-at"></i>
+                                                        </button>
+                                                    </form>
+                                                @endif
 
                                                 {{-- Reset Password --}}
                                                 <form action="{{ route('admin.user.reset-password', $item) }}"

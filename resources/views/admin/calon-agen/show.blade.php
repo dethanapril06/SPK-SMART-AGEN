@@ -89,15 +89,51 @@
                                             <td>: {{ $calonAgen->periode->nama_periode ?? '-' }}</td>
                                         </tr>
                                         <tr>
+                                            <th>Sumber Pendaftaran</th>
+                                            <td>: 
+                                                @if ($calonAgen->sumber_pendaftaran === 'admin')
+                                                    <span class="badge bg-light-info text-info border">
+                                                        <i class="bi bi-person-gear me-1"></i> Didaftarkan Admin ({{ $calonAgen->didaftarkanOleh->name ?? 'Admin' }})
+                                                    </span>
+                                                @else
+                                                    <span class="badge bg-light-primary text-primary border">
+                                                        <i class="bi bi-person me-1"></i> Mendaftar Mandiri
+                                                    </span>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <th>Akun Email</th>
                                             <td>: {{ $calonAgen->user->email ?? '-' }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Verifikasi Email</th>
+                                            <td>: 
+                                                @if ($calonAgen->user && $calonAgen->user->hasVerifiedEmail())
+                                                    <span class="badge bg-success">
+                                                        <i class="bi bi-patch-check me-1"></i> Terverifikasi ({{ $calonAgen->user->email_verified_at->format('d/m/Y H:i') }})
+                                                    </span>
+                                                @elseif ($calonAgen->user)
+                                                    <span class="badge bg-warning text-dark me-2">
+                                                        <i class="bi bi-clock-history me-1"></i> Belum Verifikasi
+                                                    </span>
+                                                    <form action="{{ route('admin.users.resend-verification', $calonAgen->user) }}" method="POST" class="d-inline">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size: 0.75rem;">
+                                                            <i class="bi bi-envelope me-1"></i> Kirim Ulang Link
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <span class="text-muted">-</span>
+                                                @endif
+                                            </td>
                                         </tr>
                                         <tr>
                                             <th>Tanggal Daftar</th>
                                             <td>: {{ $calonAgen->created_at->format('d/m/Y H:i') }}</td>
                                         </tr>
                                         <tr>
-                                            <th>Status</th>
+                                            <th>Status SPK</th>
                                             <td>:
                                                 @php
                                                     $badge = match ($calonAgen->status) {
@@ -116,16 +152,68 @@
                                 </div>
 
                                 <div class="col-md-6 col-12">
+                                    {{-- Verifikasi Dokumen Administrasi --}}
+                                    <div class="card bg-light shadow-none mb-3 border">
+                                        <div class="card-body">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <h6 class="fw-semibold mb-0"><i class="bi bi-clipboard-check me-1"></i> Verifikasi Dokumen</h6>
+                                                @if ($calonAgen->status_verifikasi === 'valid')
+                                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Valid</span>
+                                                @elseif ($calonAgen->status_verifikasi === 'tidak_valid')
+                                                    <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i> Tidak Valid</span>
+                                                @else
+                                                    <span class="badge bg-warning text-dark"><i class="bi bi-hourglass-split me-1"></i> Menunggu Verifikasi</span>
+                                                @endif
+                                            </div>
+
+                                            @if ($calonAgen->diverifikasi_at)
+                                                <div class="text-muted small mb-2">
+                                                    Diverifikasi oleh: <strong>{{ $calonAgen->diverifikasiOleh->name ?? 'Admin' }}</strong>
+                                                    pada {{ $calonAgen->diverifikasi_at->format('d/m/Y H:i') }}
+                                                </div>
+                                            @endif
+
+                                            @if ($calonAgen->catatan_verifikasi)
+                                                <div class="alert alert-light-danger small mb-3">
+                                                    <strong>Catatan:</strong> {{ $calonAgen->catatan_verifikasi }}
+                                                </div>
+                                            @endif
+
+                                            <form action="{{ route('admin.calon-agen.verifikasi-dokumen', $calonAgen) }}" method="POST">
+                                                @csrf
+                                                @method('PATCH')
+                                                <div class="form-group mb-2">
+                                                    <label class="form-label small fw-semibold">Ubah Status Verifikasi:</label>
+                                                    <select name="status_verifikasi" class="form-select form-select-sm" id="select-verifikasi">
+                                                        <option value="valid" {{ $calonAgen->status_verifikasi === 'valid' ? 'selected' : '' }}>
+                                                            Valid (Memenuhi Syarat Administrasi)
+                                                        </option>
+                                                        <option value="tidak_valid" {{ $calonAgen->status_verifikasi === 'tidak_valid' ? 'selected' : '' }}>
+                                                            Tidak Valid (Perlu Perbaikan Dokumen)
+                                                        </option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group mb-2" id="group-catatan-verifikasi" style="{{ $calonAgen->status_verifikasi === 'tidak_valid' ? '' : 'display: none;' }}">
+                                                    <label class="form-label small fw-semibold">Catatan Perbaikan Dokumen:</label>
+                                                    <textarea name="catatan_verifikasi" class="form-control form-control-sm" rows="2" placeholder="Tuliskan dokumen apa yang salah/kurang jelas...">{{ old('catatan_verifikasi', $calonAgen->catatan_verifikasi) }}</textarea>
+                                                </div>
+                                                <button type="submit" class="btn btn-sm btn-primary mt-1">
+                                                    <i class="bi bi-save me-1"></i> Simpan Hasil Verifikasi
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+
                                     <div class="card bg-light shadow-none mb-3">
                                         <div class="card-body">
-                                            <h6 class="fw-semibold mb-3">Dokumen</h6>
+                                            <h6 class="fw-semibold mb-3">Berkas Dokumen</h6>
                                             @php
                                                 $dokumenList = [
-                                                    'KTP'                  => $calonAgen->ktp_path,
-                                                    'NIB'                  => $calonAgen->nib_path,
-                                                    'NPWP'                 => $calonAgen->npwp_path,
-                                                    'Formulir Pendaftaran' => $calonAgen->formulir_pendaftaran_path,
-                                                    'Form Screening'       => $calonAgen->form_screening_path,
+                                                    'KTP (Wajib)'                  => $calonAgen->ktp_path,
+                                                    'Formulir Pendaftaran (Wajib)' => $calonAgen->formulir_pendaftaran_path,
+                                                    'NIB (Opsional)'               => $calonAgen->nib_path,
+                                                    'NPWP (Opsional)'              => $calonAgen->npwp_path,
+                                                    'Form Screening Surveyor'     => $calonAgen->form_screening_path,
                                                 ];
                                             @endphp
                                             <div class="list-group">
@@ -149,7 +237,7 @@
                                     {{-- Ubah Status --}}
                                     <div class="card bg-light shadow-none">
                                         <div class="card-body">
-                                            <h6 class="fw-semibold mb-3">Ubah Status</h6>
+                                            <h6 class="fw-semibold mb-3">Ubah Status SPK</h6>
                                             <form action="{{ route('admin.calon-agen.ubah-status', $calonAgen) }}"
                                                 method="POST" id="form-ubah-status">
                                                 @csrf
@@ -219,6 +307,14 @@
         <script src="{{ asset('template/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                const selectVerifikasi = document.getElementById('select-verifikasi');
+                const groupCatatan = document.getElementById('group-catatan-verifikasi');
+                if (selectVerifikasi && groupCatatan) {
+                    selectVerifikasi.addEventListener('change', function() {
+                        groupCatatan.style.display = this.value === 'tidak_valid' ? 'block' : 'none';
+                    });
+                }
+
                 document.getElementById('form-ubah-status').addEventListener('submit', function(e) {
                     e.preventDefault();
                     const status = document.getElementById('select-status').value;

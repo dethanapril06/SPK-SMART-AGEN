@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\HasilSmart;
+use App\Models\Kriteria;
 use App\Models\PeriodePendaftaran;
 use App\Services\SmartService;
 use Illuminate\Http\RedirectResponse;
@@ -57,22 +58,23 @@ class SmartController extends Controller
      */
     public function hitung(Request $request, PeriodePendaftaran $periode): RedirectResponse
     {
-        $request->validate([
-            'top_n' => ['required', 'integer', 'min:1'],
-        ], [
-            'top_n.required' => 'Jumlah calon agen yang direkomendasi wajib diisi.',
-            'top_n.integer'  => 'Jumlah harus berupa angka.',
-            'top_n.min'      => 'Jumlah minimal 1.',
-        ]);
+        // Validasi: bobot kriteria tidak boleh bernilai sama semua
+        $kriterias = Kriteria::all();
+        if ($kriterias->count() >= 2 && $kriterias->pluck('bobot')->unique()->count() === 1) {
+            return back()->with('error', 'Perhitungan SMART tidak dapat dijalankan karena semua kriteria memiliki nilai bobot yang sama.');
+        }
 
-        $hasil = $this->smartService->hitung($periode, (int) $request->top_n);
+        // Kuota otomatis diambil dari kuota periode
+        $kuota = $periode->kuota > 0 ? (int) $periode->kuota : (int) $request->input('top_n', 1);
+
+        $hasil = $this->smartService->hitung($periode, $kuota);
 
         if ($hasil->isEmpty()) {
-            return back()->with('error', 'Tidak ada calon agen yang sudah dinilai lengkap di periode ini.');
+            return back()->with('error', 'Tidak ada calon agen dengan dokumen administratif valid yang sudah dinilai lengkap di periode ini.');
         }
 
         return redirect()
             ->route('admin.smart.show', $periode)
-            ->with('success', "Perhitungan SMART selesai. {$hasil->count()} calon agen telah diperingkat.");
+            ->with('success', "Perhitungan SMART selesai. {$hasil->count()} calon agen telah diperingkat dengan kuota {$kuota}.");
     }
 }

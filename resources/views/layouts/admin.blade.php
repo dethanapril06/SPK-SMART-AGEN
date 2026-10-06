@@ -67,85 +67,97 @@
                 </div>
                 <div class="sidebar-menu">
                     <ul class="menu">
-                        <li class="sidebar-title">Menu Utama</li>
+                        @if (auth()->user()->isPetugasSurvey())
+                            <li class="sidebar-title">Menu Petugas Survey</li>
 
-                        {{-- Dashboard --}}
-                        <li class="sidebar-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                            <a href="{{ route('admin.dashboard') }}" class="sidebar-link">
-                                <i class="bi bi-grid-fill"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
+                            {{-- Penilaian / Survey --}}
+                            <li class="sidebar-item {{ request()->routeIs('admin.penilaian.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.penilaian.index') }}" class="sidebar-link">
+                                    <i class="bi bi-clipboard2-check-fill"></i>
+                                    <span>Penilaian Calon Agen</span>
+                                </a>
+                            </li>
+                        @else
+                            <li class="sidebar-title">Menu Utama</li>
 
-                        {{-- Periode Pendaftaran --}}
-                        <li
-                            class="sidebar-item {{ request()->routeIs('admin.periode-pendaftaran.*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.periode-pendaftaran.index') }}" class="sidebar-link">
-                                <i class="bi bi-calendar-range-fill"></i>
-                                <span>Periode Pendaftaran</span>
-                            </a>
-                        </li>
+                            {{-- Dashboard --}}
+                            <li class="sidebar-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                                <a href="{{ route('admin.dashboard') }}" class="sidebar-link">
+                                    <i class="bi bi-grid-fill"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
 
-                        {{-- Calon Agen --}}
-                        <li class="sidebar-item {{ request()->routeIs('admin.calon-agen.*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.calon-agen.index') }}" class="sidebar-link">
-                                <i class="bi bi-person-lines-fill"></i>
-                                <span>Calon Agen</span>
-                            </a>
-                        </li>
+                            {{-- Periode Pendaftaran --}}
+                            <li
+                                class="sidebar-item {{ request()->routeIs('admin.periode-pendaftaran.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.periode-pendaftaran.index') }}" class="sidebar-link">
+                                    <i class="bi bi-calendar-range-fill"></i>
+                                    <span>Periode Pendaftaran</span>
+                                </a>
+                            </li>
 
-                        {{-- Penilaian / Survey --}}
-                        <li class="sidebar-item {{ request()->routeIs('admin.penilaian.*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.penilaian.index') }}" class="sidebar-link">
-                                <i class="bi bi-clipboard2-check-fill"></i>
-                                <span>Penilaian</span>
-                            </a>
-                        </li>
+                            {{-- Calon Agen --}}
+                            <li class="sidebar-item {{ request()->routeIs('admin.calon-agen.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.calon-agen.index') }}" class="sidebar-link">
+                                    <i class="bi bi-person-lines-fill"></i>
+                                    <span>Calon Agen</span>
+                                </a>
+                            </li>
 
-                        {{-- Perhitungan SMART --}}
-                        <li class="sidebar-item {{ request()->routeIs('admin.smart.*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.smart.index') }}" class="sidebar-link">
-                                <i class="bi bi-bar-chart-line-fill"></i>
-                                <span>Perhitungan SMART</span>
-                            </a>
-                        </li>
+                            {{-- Penilaian / Survey --}}
+                            <li class="sidebar-item {{ request()->routeIs('admin.penilaian.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.penilaian.index') }}" class="sidebar-link">
+                                    <i class="bi bi-clipboard2-check-fill"></i>
+                                    <span>Penilaian</span>
+                                </a>
+                            </li>
 
-                        <li class="sidebar-title">Laporan</li>
-                        {{-- Laporan --}}
-                        <li class="sidebar-item {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.laporan.index') }}" class="sidebar-link">
-                                <i class="bi bi-file-earmark-bar-graph-fill"></i>
-                                <span>Laporan</span>
-                            </a>
-                        </li>
+                            {{-- Perhitungan SMART --}}
+                            <li class="sidebar-item {{ request()->routeIs('admin.smart.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.smart.index') }}" class="sidebar-link">
+                                    <i class="bi bi-bar-chart-line-fill"></i>
+                                    <span>Perhitungan SMART</span>
+                                </a>
+                            </li>
 
-                        <li class="sidebar-title">Master Data</li>
+                            <li class="sidebar-title">Laporan</li>
+                            {{-- Laporan --}}
+                            <li class="sidebar-item {{ request()->routeIs('admin.laporan.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.laporan.index') }}" class="sidebar-link">
+                                    <i class="bi bi-file-earmark-bar-graph-fill"></i>
+                                    <span>Laporan</span>
+                                </a>
+                            </li>
 
-                        {{-- Kriteria --}}
-                        <li class="sidebar-item {{ request()->routeIs('admin.kriteria.*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.kriteria.index') }}" class="sidebar-link">
-                                <i class="bi bi-diagram-3-fill"></i>
-                                <span>Kriteria</span>
-                            </a>
-                        </li>
+                            <li class="sidebar-title">Master Data</li>
 
-                        {{-- Sub Kriteria --}}
-                        <li class="sidebar-item {{ request()->routeIs('admin.sub-kriteria.*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.sub-kriteria.all') }}" class="sidebar-link">
-                                <i class="bi bi-list-check"></i>
-                                <span>Sub Kriteria</span>
-                            </a>
-                        </li>
+                            {{-- Kriteria --}}
+                            <li class="sidebar-item {{ request()->routeIs('admin.kriteria.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.kriteria.index') }}" class="sidebar-link">
+                                    <i class="bi bi-diagram-3-fill"></i>
+                                    <span>Kriteria</span>
+                                </a>
+                            </li>
 
-                        <li class="sidebar-title">Akun</li>
+                            {{-- Sub Kriteria --}}
+                            <li class="sidebar-item {{ request()->routeIs('admin.sub-kriteria.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.sub-kriteria.all') }}" class="sidebar-link">
+                                    <i class="bi bi-list-check"></i>
+                                    <span>Sub Kriteria</span>
+                                </a>
+                            </li>
 
-                        {{-- Manajemen User --}}
-                        <li class="sidebar-item {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
-                            <a href="{{ route('admin.user.index') }}" class="sidebar-link">
-                                <i class="bi bi-people-fill"></i>
-                                <span>Manajemen User</span>
-                            </a>
-                        </li>
+                            <li class="sidebar-title">Akun</li>
+
+                            {{-- Manajemen User --}}
+                            <li class="sidebar-item {{ request()->routeIs('admin.user.*') ? 'active' : '' }}">
+                                <a href="{{ route('admin.user.index') }}" class="sidebar-link">
+                                    <i class="bi bi-people-fill"></i>
+                                    <span>Manajemen User</span>
+                                </a>
+                            </li>
+                        @endif
 
                     </ul>
                 </div>
@@ -175,7 +187,9 @@
                                     <div class="user-menu d-flex">
                                         <div class="user-name text-end me-3">
                                             <h6 class="mb-0 text-gray-600">{{ auth()->user()->name }}</h6>
-                                            <p class="mb-0 text-sm text-gray-600">Admin</p>
+                                            <p class="mb-0 text-sm text-gray-600">
+                                                {{ auth()->user()->isPetugasSurvey() ? 'Petugas Survey' : 'Admin Pengelola' }}
+                                            </p>
                                         </div>
                                         <div class="user-img d-flex align-items-center">
                                             <div class="avatar avatar-md">

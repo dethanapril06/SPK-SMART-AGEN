@@ -44,6 +44,7 @@ class SmartService
         $jumlahKriteria = $kriterias->count();
 
         $calonAgens = CalonAgen::where('periode_id', $periode->id)
+            ->where('status_verifikasi', 'valid')
             ->whereHas('penilaian', function ($q) use ($periode) {
                 $q->where('periode_id', $periode->id);
             }, '>=', $jumlahKriteria)
@@ -292,3 +293,4 @@ class SmartService
         ];
     }
 }
+

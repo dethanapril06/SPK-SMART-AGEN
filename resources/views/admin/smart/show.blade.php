@@ -46,18 +46,17 @@
                             <form action="{{ route('admin.smart.hitung', $periode) }}" method="POST">
                                 @csrf
                                 <div class="mb-3">
-                                    <label for="top_n" class="form-label fw-semibold">
+                                    <label class="form-label fw-semibold">
                                         Jumlah Kuota Calon Agen Diterima Pada Periode Ini ({{ $periode->nama_periode }})
                                     </label>
-                                    <input type="number" class="form-control @error('top_n') is-invalid @enderror"
-                                        id="top_n" name="top_n" value="{{ old('top_n', 3) }}" min="1"
-                                        placeholder="Contoh: 3">
-                                    <div class="form-text">Calon agen dengan peringkat 1 s/d N akan dinyatakan
-                                        direkomendasi.
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light text-primary"><i class="bi bi-people-fill"></i></span>
+                                        <input type="text" class="form-control bg-light fw-bold text-primary"
+                                            value="{{ $periode->kuota ?? 3 }} Calon Agen" readonly>
                                     </div>
-                                    @error('top_n')
-                                        <div class="invalid-feedback">{{ $message }}</div>
-                                    @enderror
+                                    <div class="form-text">
+                                        Kuota diambil otomatis dari data periode pendaftaran. Calon agen dengan peringkat 1 s/d {{ $periode->kuota ?? 3 }} akan dinyatakan <strong>direkomendasi</strong>.
+                                    </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">
                                     <i class="bi bi-play-circle me-1"></i>

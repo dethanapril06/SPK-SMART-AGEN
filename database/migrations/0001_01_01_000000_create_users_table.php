@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['admin', 'calon_agen'])->default('calon_agen');
+            $table->enum('role', ['admin', 'petugas_survey', 'calon_agen'])->default('calon_agen');
             $table->rememberToken();
             $table->timestamps();
         });

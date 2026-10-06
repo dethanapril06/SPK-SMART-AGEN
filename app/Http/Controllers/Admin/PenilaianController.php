@@ -53,18 +53,16 @@ class PenilaianController extends Controller
     /**
      * Langkah 3: Form penilaian untuk satu calon agen.
      */
-    public function form(PeriodePendaftaran $periode, CalonAgen $calonAgen): View
+    public function form(PeriodePendaftaran $periode, CalonAgen $calonAgen): View|RedirectResponse
     {
-        // Log sementara untuk membantu diagnosis 404 di production
-        Log::info('PenilaianController::form binding', [
-            'url' => request()->fullUrl(),
-            'periode_id' => $periode->id ?? null,
-            'calon_agen_id' => $calonAgen->id ?? null,
-            'calon_agen_periode_id' => $calonAgen->periode_id ?? null,
-            'user_id' => auth()->id(),
-        ]);
-
         abort_if($calonAgen->periode_id !== $periode->id, 404);
+
+        // Sebelum dilakukan penilaian, pastikan dokumen administratif sudah valid
+        if (!$calonAgen->isVerifikasiValid()) {
+            return redirect()
+                ->route('admin.penilaian.calon-agen', $periode)
+                ->with('error', 'Calon agen belum dapat dinilai karena dokumen administratif belum diverifikasi VALID oleh admin.');
+        }
 
         $kriterias = Kriteria::with('subKriteria')->get();
 
@@ -97,6 +95,12 @@ class PenilaianController extends Controller
     {
         abort_if($calonAgen->periode_id !== $periode->id, 404);
 
+        if (!$calonAgen->isVerifikasiValid()) {
+            return redirect()
+                ->route('admin.penilaian.calon-agen', $periode)
+                ->with('error', 'Penilaian gagal disimpan karena dokumen administratif calon agen belum diverifikasi VALID oleh admin.');
+        }
+
         foreach ($request->validated()['penilaian'] as $kriteriaId => $subKriteriaId) {
             $nilaiInput = SubKriteria::find($subKriteriaId)->nilai;
             $catatan    = $request->input("catatan.{$kriteriaId}");
@@ -116,7 +120,7 @@ class PenilaianController extends Controller
             );
         }
 
-        // Upload Form Screening (opsional, hanya admin yang bisa lihat)
+        // Upload Form Screening
         if ($request->hasFile('form_screening')) {
             if ($calonAgen->form_screening_path) {
                 Storage::disk('public')->delete($calonAgen->form_screening_path);

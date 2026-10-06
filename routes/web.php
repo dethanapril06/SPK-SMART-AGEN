@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\SmartController;
 use App\Http\Controllers\Admin\SubKriteriaController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Auth\EmailVerificationController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\CalonAgen\DashboardController as CalonAgenDashboard;
 use App\Http\Controllers\CalonAgen\NotifikasiController;
@@ -40,7 +41,25 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Admin routes
+    // Email verification routes
+    Route::get('/email/verify', [EmailVerificationController::class, 'notice'])->name('verification.notice');
+    Route::get('/email/verify/{id}/{hash}', [EmailVerificationController::class, 'verify'])->middleware(['signed'])->name('verification.verify');
+    Route::post('/email/verification-notification', [EmailVerificationController::class, 'resend'])->middleware(['throttle:6,1'])->name('verification.send');
+
+    // Penilaian routes (Bisa diakses oleh Admin Pengelola DAN Petugas Survey)
+    Route::middleware('role:admin,petugas_survey')
+        ->prefix('admin')
+        ->name('admin.')
+        ->group(function () {
+            Route::prefix('penilaian')->name('penilaian.')->group(function () {
+                Route::get('/', [PenilaianController::class, 'index'])->name('index');
+                Route::get('/{periode}', [PenilaianController::class, 'daftarCalonAgen'])->name('calon-agen');
+                Route::get('/{periode}/{calonAgen}', [PenilaianController::class, 'form'])->name('form');
+                Route::post('/{periode}/{calonAgen}', [PenilaianController::class, 'store'])->name('store');
+            });
+        });
+
+    // Admin-only routes (Hanya untuk Admin Pengelola Sistem)
     Route::middleware('role:admin')
         ->prefix('admin')
         ->name('admin.')
@@ -64,11 +83,13 @@ Route::middleware('auth')->group(function () {
                 ->name('calon-agen.show');
             Route::patch('calon-agen/{calonAgen}/status', [CalonAgenController::class, 'ubahStatus'])
                 ->name('calon-agen.ubah-status');
+            Route::patch('calon-agen/{calonAgen}/verifikasi-dokumen', [CalonAgenController::class, 'verifikasiDokumen'])
+                ->name('calon-agen.verifikasi-dokumen');
             Route::delete('calon-agen/{calonAgen}', [CalonAgenController::class, 'destroy'])   
                 ->name('calon-agen.destroy');
 
             Route::resource('kriteria', KriteriaController::class)
-                ->parameters(['kriteria' => 'kriteria']);;
+                ->parameters(['kriteria' => 'kriteria']);
             Route::get('sub-kriteria', [SubKriteriaController::class, 'all'])
                 ->name('sub-kriteria.all');
             Route::resource('kriteria.sub-kriteria', SubKriteriaController::class)
@@ -80,25 +101,17 @@ Route::middleware('auth')->group(function () {
                 ->except(['show']);
             Route::patch('user/{user}/reset-password', [UserController::class, 'resetPassword'])
                 ->name('user.reset-password');
-            
-            Route::prefix('penilaian')->name('penilaian.')->group(function () {
-                Route::get('/', [PenilaianController::class, 'index'])->name('index');
- 
-                Route::get('/{periode}', [PenilaianController::class, 'daftarCalonAgen'])->name('calon-agen');
- 
-                Route::get('/{periode}/{calonAgen}', [PenilaianController::class, 'form'])->name('form');
- 
-                Route::post('/{periode}/{calonAgen}', [PenilaianController::class, 'store'])->name('store');
-            });
+            Route::post('user/{user}/resend-verification', [EmailVerificationController::class, 'adminResend'])
+                ->name('user.resend-verification');
 
             Route::prefix('smart')->name('smart.')->group(function () {
-                Route::get('/',[SmartController::class, 'index'])
+                Route::get('/', [SmartController::class, 'index'])
                     ->name('index');
-                Route::get('/{periode}',[SmartController::class, 'show'])
+                Route::get('/{periode}', [SmartController::class, 'show'])
                     ->name('show');
-                Route::post('/{periode}/hitung',[SmartController::class, 'hitung'])
+                Route::post('/{periode}/hitung', [SmartController::class, 'hitung'])
                     ->name('hitung');
-                Route::get('/{periode}/langkah',[SmartController::class, 'langkah'])
+                Route::get('/{periode}/langkah', [SmartController::class, 'langkah'])
                     ->name('langkah');
             });
 
@@ -109,8 +122,8 @@ Route::middleware('auth')->group(function () {
             Route::get('laporan/hasil-seleksi', [LaporanController::class, 'hasilSeleksi'])->name('laporan.hasil-seleksi');
         });
 
-    // Calon Agen routes
-    Route::middleware('role:calon_agen')
+    // Calon Agen routes (Wajib verified email)
+    Route::middleware(['role:calon_agen', 'verified'])
         ->prefix('calon-agen')
         ->name('calon-agen.')
         ->group(function () {

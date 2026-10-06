@@ -79,10 +79,9 @@
                                             <select class="form-select @error('role') is-invalid @enderror" id="role"
                                                 name="role" required>
                                                 <option value="" disabled selected>-- Pilih Role --</option>
-                                                <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin
-                                                </option>
-                                                <option value="calon_agen"
-                                                    {{ old('role') === 'calon_agen' ? 'selected' : '' }}>Calon Agen</option>
+                                                <option value="admin" {{ old('role') === 'admin' ? 'selected' : '' }}>Admin Pengelola</option>
+                                                <option value="petugas_survey" {{ old('role') === 'petugas_survey' ? 'selected' : '' }}>Petugas Survey</option>
+                                                <option value="calon_agen" {{ old('role') === 'calon_agen' ? 'selected' : '' }}>Calon Agen</option>
                                             </select>
                                             @error('role')
                                                 <div class="invalid-feedback">{{ $message }}</div>

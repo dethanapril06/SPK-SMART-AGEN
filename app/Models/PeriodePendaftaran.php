@@ -19,11 +19,13 @@ class PeriodePendaftaran extends Model
         'tanggal_buka',
         'tanggal_tutup',
         'status',
+        'kuota',
         'created_by',
     ];
 
     protected $casts = [
-        'id' => 'integer',
+        'id'            => 'integer',
+        'kuota'         => 'integer',
         'tanggal_buka'  => 'date',
         'tanggal_tutup' => 'date',
     ];
@@ -31,6 +33,16 @@ class PeriodePendaftaran extends Model
     public function isAktif(): bool
     {
         return $this->status === 'aktif';
+    }
+
+    public function isDitutup(): bool
+    {
+        return $this->status === 'ditutup';
+    }
+
+    public function isDraft(): bool
+    {
+        return $this->status === 'draft';
     }
 
     // Relasi

@@ -41,6 +41,17 @@ class KriteriaController extends Controller
             'tipe.in'                => 'Tipe tidak valid.',
         ]);
 
+        // Cek: jika ada kriteria lain, bobot tidak boleh sama semua
+        $existing = Kriteria::all();
+        if ($existing->isNotEmpty()) {
+            $allWeights = $existing->pluck('bobot')->push((int) $validated['bobot']);
+            if ($allWeights->unique()->count() === 1) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['bobot' => 'Bobot kriteria tidak boleh bernilai sama untuk semua kriteria.']);
+            }
+        }
+
         Kriteria::create([
             ...$validated,
             'created_by' => auth()->id(),
@@ -80,6 +91,17 @@ class KriteriaController extends Controller
             'tipe.required'          => 'Tipe wajib dipilih.',
             'tipe.in'                => 'Tipe tidak valid.',
         ]);
+
+        // Cek: jika ada kriteria lain, bobot tidak boleh sama semua
+        $others = Kriteria::where('id', '!=', $kriteria->id)->get();
+        if ($others->isNotEmpty()) {
+            $allWeights = $others->pluck('bobot')->push((int) $validated['bobot']);
+            if ($allWeights->unique()->count() === 1) {
+                return back()
+                    ->withInput()
+                    ->withErrors(['bobot' => 'Bobot kriteria tidak boleh bernilai sama untuk semua kriteria.']);
+            }
+        }
 
         $kriteria->update($validated);
 

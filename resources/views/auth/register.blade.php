@@ -57,7 +57,7 @@
 
                 @if ($errors->has('periode'))
                     <div class="alert alert-light-danger color-danger alert-dismissible fade show" role="alert">
-                        {{ $errors->first('periode') }}
+                        <i class="bi bi-exclamation-triangle me-2"></i>{{ $errors->first('periode') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
@@ -105,11 +105,15 @@
                             @enderror
                         </div>
 
-                        <div class="form-group position-relative has-icon-left mb-4">
-                            <input type="text" name="nama_usaha" id="nama_usaha"
-                                class="form-control form-control-xl @error('nama_usaha') is-invalid @enderror"
-                                placeholder="Nama Usaha" value="{{ old('nama_usaha') }}">
-                            <div class="form-control-icon"><i class="bi bi-shop"></i></div>
+                        <div class="form-group mb-4">
+                            <label class="form-label text-muted small fw-semibold">Nama Usaha</label>
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text fw-bold text-primary bg-light">BeJuBis@</span>
+                                <input type="text" name="nama_usaha" id="nama_usaha"
+                                    class="form-control form-control-xl @error('nama_usaha') is-invalid @enderror"
+                                    placeholder="Nama Usaha..." value="{{ old('nama_usaha') }}">
+                            </div>
+                            <small class="text-muted d-block mt-1" style="font-size: 0.78rem;">Awalan <strong>BeJuBis@</strong> otomatis ditambahkan oleh sistem.</small>
                             @error('nama_usaha')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
@@ -188,58 +192,104 @@
 
                     {{-- ── STEP 3: DOKUMEN ── --}}
                     <div id="register-dokumen-step" class="d-none">
-                        <p class="text-muted fw-semibold mb-2 mt-1">Dokumen Administratif</p>
+                        <p class="text-muted fw-semibold mb-2 mt-1">Dokumen Pendaftaran</p>
                         <div class="alert alert-light-info color-info py-2 px-3 mb-3" style="font-size: 0.85rem;">
                             <i class="bi bi-info-circle me-1"></i>
-                            Format file yang diterima: <strong>PDF, JPG, JPEG, PNG</strong>. Ukuran maksimal: <strong>2MB</strong> per file.
+                            Format file yang diterima: <strong>PDF, JPG, JPEG, PNG</strong>. Ukuran maksimal: <strong>2MB</strong> per berkas.
                         </div>
 
-                        <div class="form-group mb-4">
-                            <label for="ktp" class="form-label">KTP <span class="text-danger">*</span></label>
-                            <small class="wajib-info d-block mb-1"><i class="bi bi-exclamation-circle me-1"></i>Wajib diunggah</small>
-                            <input type="file" name="ktp" id="ktp"
-                                class="form-control form-control-xl @error('ktp') is-invalid @enderror"
-                                accept=".pdf,.jpg,.jpeg,.png" required>
-                            <small class="dokumen-info mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
-                            @error('ktp')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
+                        {{-- Dokumen Wajib --}}
+                        <div class="card border border-primary-subtle bg-light mb-3">
+                            <div class="card-body p-3">
+                                <h6 class="text-primary mb-3"><i class="bi bi-check2-circle me-1"></i> Dokumen Wajib</h6>
+
+                                <div class="form-group mb-3">
+                                    <label for="ktp" class="form-label fw-semibold">1. KTP <span class="text-danger">*</span></label>
+                                    @if (session('register_drafts.ktp'))
+                                        <div class="alert alert-success py-1 px-2 small mb-2 d-flex align-items-center">
+                                            <i class="bi bi-file-earmark-check me-2 fs-5"></i>
+                                            <div>
+                                                <strong>File KTP tersimpan:</strong> {{ session('register_drafts.ktp.name') }}
+                                                <div class="text-muted small">File draft tersimpan, tidak perlu upload ulang kecuali ingin mengganti file.</div>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <small class="wajib-info d-block mb-1"><i class="bi bi-exclamation-circle me-1"></i>Wajib diunggah</small>
+                                    @endif
+                                    <input type="file" name="ktp" id="ktp"
+                                        class="form-control form-control-xl @error('ktp') is-invalid @enderror"
+                                        accept=".pdf,.jpg,.jpeg,.png" {{ session('register_drafts.ktp') ? '' : 'required' }}>
+                                    <small class="dokumen-info mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
+                                    @error('ktp')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+
+                                <div class="form-group mb-1">
+                                    <label for="formulir_pendaftaran" class="form-label fw-semibold">
+                                        2. Formulir Pendaftaran <span class="text-danger">*</span>
+                                    </label>
+                                    @if (session('register_drafts.formulir_pendaftaran'))
+                                        <div class="alert alert-success py-1 px-2 small mb-2 d-flex align-items-center">
+                                            <i class="bi bi-file-earmark-check me-2 fs-5"></i>
+                                            <div>
+                                                <strong>File Formulir tersimpan:</strong> {{ session('register_drafts.formulir_pendaftaran.name') }}
+                                                <div class="text-muted small">File draft tersimpan, tidak perlu upload ulang kecuali ingin mengganti file.</div>
+                                            </div>
+                                        </div>
+                                    @else
+                                        <small class="wajib-info d-block mb-1"><i class="bi bi-exclamation-circle me-1"></i>Wajib diunggah</small>
+                                    @endif
+                                    <input type="file" name="formulir_pendaftaran" id="formulir_pendaftaran"
+                                        class="form-control form-control-xl @error('formulir_pendaftaran') is-invalid @enderror"
+                                        accept=".pdf,.jpg,.jpeg,.png" {{ session('register_drafts.formulir_pendaftaran') ? '' : 'required' }}>
+                                    <small class="dokumen-info mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
+                                    @error('formulir_pendaftaran')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group mb-4">
-                            <label for="nib" class="form-label">NIB</label>
-                            <input type="file" name="nib" id="nib"
-                                class="form-control form-control-xl @error('nib') is-invalid @enderror"
-                                accept=".pdf,.jpg,.jpeg,.png">
-                            <small class="dokumen-info mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
-                            @error('nib')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
-                        </div>
+                        {{-- Dokumen Opsional --}}
+                        <div class="card border bg-light mb-3">
+                            <div class="card-body p-3">
+                                <h6 class="text-secondary mb-3"><i class="bi bi-files me-1"></i> Dokumen Tambahan (Opsional)</h6>
 
-                        <div class="form-group mb-4">
-                            <label for="npwp" class="form-label">NPWP</label>
-                            <input type="file" name="npwp" id="npwp"
-                                class="form-control form-control-xl @error('npwp') is-invalid @enderror"
-                                accept=".pdf,.jpg,.jpeg,.png">
-                            <small class="dokumen-info mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
-                            @error('npwp')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
-                        </div>
+                                <div class="form-group mb-3">
+                                    <label for="nib" class="form-label fw-semibold">3. NIB (Nomor Induk Berusaha)</label>
+                                    @if (session('register_drafts.nib'))
+                                        <div class="alert alert-success py-1 px-2 small mb-2 d-flex align-items-center">
+                                            <i class="bi bi-file-earmark-check me-2 fs-5"></i>
+                                            <div><strong>File NIB tersimpan:</strong> {{ session('register_drafts.nib.name') }}</div>
+                                        </div>
+                                    @endif
+                                    <input type="file" name="nib" id="nib"
+                                        class="form-control form-control-xl @error('nib') is-invalid @enderror"
+                                        accept=".pdf,.jpg,.jpeg,.png">
+                                    <small class="dokumen-info mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
+                                    @error('nib')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
 
-                        <div class="form-group mb-4">
-                            <label for="formulir_pendaftaran" class="form-label">
-                                Formulir Pendaftaran <span class="text-danger">*</span>
-                            </label>
-                            <small class="wajib-info d-block mb-1"><i class="bi bi-exclamation-circle me-1"></i>Wajib diunggah</small>
-                            <input type="file" name="formulir_pendaftaran" id="formulir_pendaftaran"
-                                class="form-control form-control-xl @error('formulir_pendaftaran') is-invalid @enderror"
-                                accept=".pdf,.jpg,.jpeg,.png" required>
-                            <small class="dokumen-info mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
-                            @error('formulir_pendaftaran')
-                                <div class="invalid-feedback d-block">{{ $message }}</div>
-                            @enderror
+                                <div class="form-group mb-1">
+                                    <label for="npwp" class="form-label fw-semibold">4. NPWP</label>
+                                    @if (session('register_drafts.npwp'))
+                                        <div class="alert alert-success py-1 px-2 small mb-2 d-flex align-items-center">
+                                            <i class="bi bi-file-earmark-check me-2 fs-5"></i>
+                                            <div><strong>File NPWP tersimpan:</strong> {{ session('register_drafts.npwp.name') }}</div>
+                                        </div>
+                                    @endif
+                                    <input type="file" name="npwp" id="npwp"
+                                        class="form-control form-control-xl @error('npwp') is-invalid @enderror"
+                                        accept=".pdf,.jpg,.jpeg,.png">
+                                    <small class="dokumen-info mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
+                                    @error('npwp')
+                                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
 
                         <div class="d-flex gap-2 mt-3">
@@ -254,7 +304,7 @@
 
                     {{-- ── STEP 4: AKUN ── --}}
                     <div id="register-akun-step" class="d-none">
-                        <p class="text-muted fw-semibold mb-2 mt-1">Data Akun</p>
+                        <p class="text-muted fw-semibold mb-2 mt-1">Data Akun &amp; Keamanan</p>
 
                         <div class="form-group position-relative has-icon-left mb-4">
                             <input type="text" name="name" id="name"
@@ -269,8 +319,9 @@
                         <div class="form-group position-relative has-icon-left mb-4">
                             <input type="email" name="email" id="email"
                                 class="form-control form-control-xl @error('email') is-invalid @enderror"
-                                placeholder="Email" value="{{ old('email') }}" required>
+                                placeholder="Email Aktif" value="{{ old('email') }}" required>
                             <div class="form-control-icon"><i class="bi bi-envelope"></i></div>
+                            <small class="text-muted d-block mt-1">Link verifikasi akun akan dikirimkan ke email ini.</small>
                             @error('email')
                                 <div class="invalid-feedback d-block">{{ $message }}</div>
                             @enderror
@@ -460,10 +511,12 @@
             // ── Redirect to correct step on validation error after submit ──
             @if ($errors->has('ktp') || $errors->has('nib') || $errors->has('npwp') || $errors->has('formulir_pendaftaran'))
                 showStep('dokumen');
-            @elseif ($errors->has('alamat_domisili') || $errors->has('alamat_usaha'))
+            @elseif ($errors->has('alamat_domisili') || $errors->has('alamat_usaha') || $errors->has('lat_domisili') || $errors->has('lat_usaha'))
                 showStep('alamat');
             @elseif ($errors->has('name') || $errors->has('email') || $errors->has('password') || $errors->has('password_confirmation'))
                 showStep('akun');
+            @elseif ($errors->any())
+                showStep('data');
             @endif
 
             // ── Leaflet Maps with ESRI Satellite ──

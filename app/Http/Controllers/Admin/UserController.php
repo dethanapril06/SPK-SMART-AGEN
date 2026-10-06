@@ -34,7 +34,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name'     => ['required', 'string', 'max:255'],
             'email'    => ['required', 'email', 'unique:users,email'],
-            'role'     => ['required', Rule::in(['admin', 'calon_agen'])],
+            'role'     => ['required', Rule::in(['admin', 'petugas_survey', 'calon_agen'])],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ], [
             'name.required'     => 'Nama wajib diisi.',
@@ -47,10 +47,11 @@ class UserController extends Controller
         ]);
 
         User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'role'     => $validated['role'],
-            'password' => Hash::make($validated['password']),
+            'name'              => $validated['name'],
+            'email'             => $validated['email'],
+            'role'              => $validated['role'],
+            'password'          => Hash::make($validated['password']),
+            'email_verified_at' => now(), // Otomatis terverifikasi jika dibuat oleh admin
         ]);
 
         return redirect()
@@ -68,7 +69,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name'  => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', Rule::unique('users', 'email')->ignore($user->id)],
-            'role'  => ['required', Rule::in(['admin', 'calon_agen'])],
+            'role'  => ['required', Rule::in(['admin', 'petugas_survey', 'calon_agen'])],
         ], [
             'name.required'  => 'Nama wajib diisi.',
             'email.required' => 'Email wajib diisi.',

@@ -63,12 +63,29 @@
                                     <option value="">-- Pilih Periode --</option>
                                     @foreach ($periodes as $periode)
                                         <option value="{{ $periode->id }}"
-                                            {{ old('periode_id', $calonAgen->periode_id) == $periode->id ? 'selected' : '' }}>
-                                            {{ $periode->nama_periode }} ({{ ucfirst($periode->status) }})
+                                            {{ old('periode_id', $calonAgen->periode_id) == $periode->id ? 'selected' : '' }}
+                                            {{ $periode->isDitutup() && $periode->id != $calonAgen->periode_id ? 'disabled' : '' }}>
+                                            {{ $periode->nama_periode }}
+                                            @if ($periode->isDitutup())
+                                                (Ditutup)
+                                            @elseif ($periode->isAktif())
+                                                (Aktif - Kuota: {{ $periode->kuota ?? 0 }})
+                                            @else
+                                                (Draft)
+                                            @endif
                                         </option>
                                     @endforeach
                                 </select>
                                 @error('periode_id')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label">Email Calon Agen <span class="text-danger">*</span></label>
+                                <input type="email" name="email" id="email"
+                                    class="form-control @error('email') is-invalid @enderror"
+                                    value="{{ old('email', $calonAgen->user?->email) }}" required>
+                                @error('email')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
@@ -92,11 +109,20 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label for="nama_usaha" class="form-label">Nama Usaha</label>
-                                <input type="text" name="nama_usaha" id="nama_usaha"
-                                    class="form-control @error('nama_usaha') is-invalid @enderror"
-                                    value="{{ old('nama_usaha', $calonAgen->nama_usaha) }}">
+                                @php
+                                    $rawUsaha = $calonAgen->nama_usaha ?? '';
+                                    $cleanUsaha = \Illuminate\Support\Str::startsWith($rawUsaha, 'BeJuBis@') ? \Illuminate\Support\Str::after($rawUsaha, 'BeJuBis@') : $rawUsaha;
+                                @endphp
+                                <div class="input-group">
+                                    <span class="input-group-text fw-bold text-primary bg-light">BeJuBis@</span>
+                                    <input type="text" name="nama_usaha" id="nama_usaha"
+                                        class="form-control @error('nama_usaha') is-invalid @enderror"
+                                        value="{{ old('nama_usaha', $cleanUsaha) }}"
+                                        placeholder="Nama usaha...">
+                                </div>
+                                <small class="text-muted">Awalan <strong>BeJuBis@</strong> otomatis ditambahkan sistem.</small>
                                 @error('nama_usaha')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
                             <div class="col-md-6 mb-3">

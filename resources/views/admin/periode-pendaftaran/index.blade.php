@@ -50,11 +50,12 @@
                     @endif
 
                     <div class="table-responsive">
-                        <table class="table table-striped" id="table1">
+                        <table class="table table-striped align-middle" id="table1">
                             <thead>
                                 <tr>
                                     <th>No</th>
                                     <th>Nama Periode</th>
+                                    <th>Kuota</th>
                                     <th>Tanggal Buka</th>
                                     <th>Tanggal Tutup</th>
                                     <th>Status</th>
@@ -66,7 +67,12 @@
                                 @forelse ($periodes as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->nama_periode }}</td>
+                                        <td><strong>{{ $item->nama_periode }}</strong></td>
+                                        <td>
+                                            <span class="badge bg-light-primary text-primary fw-bold">
+                                                <i class="bi bi-people me-1"></i>{{ $item->kuota ?? '-' }} Agen
+                                            </span>
+                                        </td>
                                         <td>{{ $item->tanggal_buka->format('d/m/Y') }}</td>
                                         <td>{{ $item->tanggal_tutup->format('d/m/Y') }}</td>
                                         <td>
@@ -108,7 +114,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center">Belum ada data periode pendaftaran.</td>
+                                        <td colspan="8" class="text-center py-4 text-muted">Belum ada data periode pendaftaran.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

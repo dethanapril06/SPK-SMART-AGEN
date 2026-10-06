@@ -96,6 +96,20 @@
 
                                     <div class="col-md-6 col-12">
                                         <div class="form-group">
+                                            <label for="kuota">Jumlah Kuota Calon Agen Diterima <span class="text-danger">*</span></label>
+                                            <input type="number"
+                                                class="form-control @error('kuota') is-invalid @enderror"
+                                                placeholder="Contoh: 3" id="kuota"
+                                                name="kuota" value="{{ old('kuota', $periodePendaftaran->kuota ?? 3) }}" min="1" required>
+                                            <small class="text-muted">Kuota calon agen terbaik yang akan direkomendasikan pada periode ini.</small>
+                                            @error('kuota')
+                                                <div class="invalid-feedback">{{ $message }}</div>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 col-12">
+                                        <div class="form-group">
                                             <label for="status">Status</label>
                                             <select class="form-select @error('status') is-invalid @enderror" id="status"
                                                 name="status" required>
@@ -112,7 +126,7 @@
                                             @error('status')
                                                 <div class="invalid-feedback">{{ $message }}</div>
                                             @enderror
-                                            <small class="text-muted">
+                                            <small class="text-muted d-block mt-1">
                                                 <i class="bi bi-info-circle"></i>
                                                 Jika status diubah ke <strong>Aktif</strong>, periode lain yang sedang
                                                 aktif akan otomatis ditutup.

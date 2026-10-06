@@ -61,7 +61,7 @@
 
                     {{-- Filter --}}
                     <form method="GET" action="{{ route('admin.calon-agen.index') }}" class="row g-2 mb-4">
-                        <div class="col-md-4 col-12">
+                        <div class="col-md-3 col-12">
                             <select name="periode_id" class="form-select">
                                 <option value="">-- Semua Periode --</option>
                                 @foreach ($periodes as $periode)
@@ -74,15 +74,19 @@
                         </div>
                         <div class="col-md-3 col-12">
                             <select name="status" class="form-select">
-                                <option value="">-- Semua Status --</option>
-                                <option value="diproses" {{ request('status') === 'diproses' ? 'selected' : '' }}>Diproses
-                                </option>
-                                <option value="disurvey" {{ request('status') === 'disurvey' ? 'selected' : '' }}>Disurvey
-                                </option>
-                                <option value="direkomendasi" {{ request('status') === 'direkomendasi' ? 'selected' : '' }}>Direkomendasi
-                                </option>
-                                <option value="belumdirekomendasi" {{ request('status') === 'belumdirekomendasi' ? 'selected' : '' }}>Belum Direkomendasi
-                                </option>
+                                <option value="">-- Semua Status SPK --</option>
+                                <option value="diproses" {{ request('status') === 'diproses' ? 'selected' : '' }}>Diproses</option>
+                                <option value="disurvey" {{ request('status') === 'disurvey' ? 'selected' : '' }}>Disurvey</option>
+                                <option value="direkomendasi" {{ request('status') === 'direkomendasi' ? 'selected' : '' }}>Direkomendasi</option>
+                                <option value="belumdirekomendasi" {{ request('status') === 'belumdirekomendasi' ? 'selected' : '' }}>Belum Direkomendasi</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 col-12">
+                            <select name="status_verifikasi" class="form-select">
+                                <option value="">-- Verifikasi Dokumen --</option>
+                                <option value="menunggu" {{ request('status_verifikasi') === 'menunggu' ? 'selected' : '' }}>Menunggu Verifikasi</option>
+                                <option value="valid" {{ request('status_verifikasi') === 'valid' ? 'selected' : '' }}>Valid</option>
+                                <option value="tidak_valid" {{ request('status_verifikasi') === 'tidak_valid' ? 'selected' : '' }}>Tidak Valid</option>
                             </select>
                         </div>
                         <div class="col-auto">
@@ -96,16 +100,16 @@
                     </form>
 
                     <div class="table-responsive">
-                        <table class="table table-striped" id="table1">
+                        <table class="table table-striped align-middle" id="table1">
                             <thead>
                                 <tr>
                                     <th>No</th>
                                     <th>Nama Usaha</th>
                                     <th>Nama Pemilik</th>
-                                    <th>NIK</th>
-                                    <th>No HP</th>
                                     <th>Periode</th>
-                                    <th>Status</th>
+                                    <th>Sumber</th>
+                                    <th>Verifikasi Dokumen</th>
+                                    <th>Status SPK</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -113,11 +117,41 @@
                                 @forelse ($calonAgens as $item)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $item->nama_usaha ?? '-' }}</td>
-                                        <td>{{ $item->nama_lengkap }}</td>
-                                        <td>{{ $item->nik }}</td>
-                                        <td>{{ $item->no_hp }}</td>
+                                        <td>
+                                            <div class="fw-bold">{{ $item->nama_usaha ?? '-' }}</div>
+                                            <small class="text-muted"><i class="bi bi-telephone me-1"></i>{{ $item->no_hp }}</small>
+                                        </td>
+                                        <td>
+                                            <div>{{ $item->nama_lengkap }}</div>
+                                            <small class="text-muted">NIK: {{ $item->nik }}</small>
+                                        </td>
                                         <td>{{ $item->periode->nama_periode ?? '-' }}</td>
+                                        <td>
+                                            @if ($item->sumber_pendaftaran === 'admin')
+                                                <span class="badge bg-light-info text-info border" title="Didaftarkan oleh {{ $item->didaftarkanOleh->name ?? 'Admin' }}">
+                                                    <i class="bi bi-person-gear me-1"></i>Admin
+                                                </span>
+                                            @else
+                                                <span class="badge bg-light-primary text-primary border">
+                                                    <i class="bi bi-person me-1"></i>Mandiri
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($item->status_verifikasi === 'valid')
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle me-1"></i>Valid
+                                                </span>
+                                            @elseif ($item->status_verifikasi === 'tidak_valid')
+                                                <span class="badge bg-danger" title="{{ $item->catatan_verifikasi }}">
+                                                    <i class="bi bi-x-circle me-1"></i>Tidak Valid
+                                                </span>
+                                            @else
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="bi bi-clock me-1"></i>Menunggu
+                                                </span>
+                                            @endif
+                                        </td>
                                         <td>
                                             @php
                                                 $badge = match ($item->status) {
@@ -166,7 +200,7 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="8" class="text-center">Belum ada data calon agen.</td>
+                                        <td colspan="8" class="text-center py-4 text-muted">Belum ada data calon agen.</td>
                                     </tr>
                                 @endforelse
                             </tbody>

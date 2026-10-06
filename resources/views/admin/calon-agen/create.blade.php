@@ -54,21 +54,28 @@
                         @csrf
 
                         <div class="alert alert-light-info color-info">
-                            Akun calon agen akan dibuat otomatis. Email login dibuat dari nama pemilik, password default:
-                            <strong>password</strong>.
+                            Akun calon agen akan dibuat secara otomatis. Password login default: <strong>password</strong>. Tautan verifikasi email akan otomatis dikirimkan ke alamat email calon agen.
                         </div>
 
                         <h6 class="text-muted mb-3 mt-2">Data Calon Agen</h6>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="periode_id" class="form-label">Periode</label>
+                                <label for="periode_id" class="form-label">Periode Pendaftaran <span class="text-danger">*</span></label>
                                 <select name="periode_id" id="periode_id"
                                     class="form-select @error('periode_id') is-invalid @enderror" required>
                                     <option value="">-- Pilih Periode --</option>
                                     @foreach ($periodes as $periode)
                                         <option value="{{ $periode->id }}"
-                                            {{ old('periode_id') == $periode->id ? 'selected' : '' }}>
-                                            {{ $periode->nama_periode }} ({{ ucfirst($periode->status) }})
+                                            {{ old('periode_id') == $periode->id ? 'selected' : '' }}
+                                            {{ $periode->isDitutup() ? 'disabled' : '' }}>
+                                            {{ $periode->nama_periode }}
+                                            @if ($periode->isDitutup())
+                                                (Ditutup - Tidak dapat dipilih)
+                                            @elseif ($periode->isAktif())
+                                                (Aktif - Kuota: {{ $periode->kuota ?? 0 }})
+                                            @else
+                                                (Draft)
+                                            @endif
                                         </option>
                                     @endforeach
                                 </select>
@@ -76,145 +83,185 @@
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
                             <div class="col-md-6 mb-3">
-                                <label for="nik" class="form-label">NIK</label>
+                                <label for="email" class="form-label">Email Calon Agen <span class="text-danger">*</span></label>
+                                <input type="email" name="email" id="email"
+                                    class="form-control @error('email') is-invalid @enderror"
+                                    placeholder="Contoh: agen@gmail.com"
+                                    value="{{ old('email') }}" required>
+                                <small class="text-muted">Digunakan untuk login dan menerima link verifikasi email.</small>
+                                @error('email')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="nik" class="form-label">NIK <span class="text-danger">*</span></label>
                                 <input type="text" name="nik" id="nik"
                                     class="form-control @error('nik') is-invalid @enderror"
-                                    value="{{ old('nik') }}" maxlength="16" required>
+                                    value="{{ old('nik') }}" maxlength="16" placeholder="16 digit NIK" required>
                                 @error('nik')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
                             <div class="col-md-6 mb-3">
-                                <label for="nama_lengkap" class="form-label">Nama Pemilik</label>
+                                <label for="nama_lengkap" class="form-label">Nama Pemilik <span class="text-danger">*</span></label>
                                 <input type="text" name="nama_lengkap" id="nama_lengkap"
                                     class="form-control @error('nama_lengkap') is-invalid @enderror"
+                                    placeholder="Nama lengkap sesuai KTP"
                                     value="{{ old('nama_lengkap') }}" required>
                                 @error('nama_lengkap')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+
                             <div class="col-md-6 mb-3">
                                 <label for="nama_usaha" class="form-label">Nama Usaha</label>
-                                <input type="text" name="nama_usaha" id="nama_usaha"
-                                    class="form-control @error('nama_usaha') is-invalid @enderror"
-                                    value="{{ old('nama_usaha') }}">
+                                <div class="input-group">
+                                    <span class="input-group-text fw-bold text-primary bg-light">BeJuBis@</span>
+                                    <input type="text" name="nama_usaha" id="nama_usaha"
+                                        class="form-control @error('nama_usaha') is-invalid @enderror"
+                                        placeholder="Tuliskan nama usaha..."
+                                        value="{{ old('nama_usaha') }}">
+                                </div>
+                                <small class="text-muted">Awalan <strong>BeJuBis@</strong> otomatis ditambahkan sistem.</small>
                                 @error('nama_usaha')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
+
                             <div class="col-md-6 mb-3">
-                                <label for="no_hp" class="form-label">No HP</label>
+                                <label for="no_hp" class="form-label">No HP / WhatsApp <span class="text-danger">*</span></label>
                                 <input type="text" name="no_hp" id="no_hp"
                                     class="form-control @error('no_hp') is-invalid @enderror"
-                                    value="{{ old('no_hp') }}" maxlength="20" required>
+                                    value="{{ old('no_hp') }}" maxlength="20" placeholder="08xxxxxxxxxx" required>
                                 @error('no_hp')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
                             </div>
+                        </div>
 
-                            {{-- ── Alamat Domisili + Map ── --}}
-                            <div class="col-12 mb-3">
-                                <label for="alamat_domisili" class="form-label fw-semibold">
-                                    <i class="bi bi-house-door me-1"></i> Alamat Domisili Pemilik <span class="text-danger">*</span>
-                                </label>
+                        <hr class="my-4">
+
+                        <h6 class="text-muted mb-3">Alamat Domisili & Lokasi Usaha</h6>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="alamat_domisili" class="form-label">Alamat Domisili <span class="text-danger">*</span></label>
                                 <div class="map-search-wrap">
-                                    <input type="text" id="search-domisili" class="form-control form-control-sm"
-                                        placeholder="Cari lokasi domisili...">
+                                    <input type="text" class="form-control form-control-sm" id="search-domisili"
+                                        placeholder="Cari lokasi domisili di peta..." autocomplete="off">
                                     <i class="bi bi-search map-search-icon"></i>
                                 </div>
                                 <div id="map-domisili" class="map-container"></div>
-                                <small class="text-muted d-block mb-1">
-                                    <i class="bi bi-info-circle me-1"></i>Klik peta atau cari lokasi — teks alamat terisi otomatis
-                                </small>
-                                <textarea name="alamat_domisili" id="alamat_domisili" rows="2"
-                                    class="form-control @error('alamat_domisili') is-invalid @enderror"
-                                    placeholder="Isi manual atau klik peta" required>{{ old('alamat_domisili') }}</textarea>
-                                <input type="hidden" name="lat_domisili" id="lat_domisili" value="{{ old('lat_domisili') }}">
-                                <input type="hidden" name="lng_domisili" id="lng_domisili" value="{{ old('lng_domisili') }}">
+                                <small class="text-muted d-block mb-1"><i class="bi bi-info-circle me-1"></i>Geser marker merah untuk menentukan titik koordinat domisili.</small>
+                                <textarea name="alamat_domisili" id="alamat_domisili" rows="3"
+                                    class="form-control @error('alamat_domisili') is-invalid @enderror" required>{{ old('alamat_domisili') }}</textarea>
                                 @error('alamat_domisili')
                                     <div class="invalid-feedback">{{ $message }}</div>
                                 @enderror
+                                <input type="hidden" name="lat_domisili" id="lat_domisili" value="{{ old('lat_domisili') }}">
+                                <input type="hidden" name="lng_domisili" id="lng_domisili" value="{{ old('lng_domisili') }}">
                             </div>
 
-                            {{-- ── Alamat Usaha + Map ── --}}
-                            <div class="col-12 mb-3">
-                                <label for="alamat_usaha" class="form-label fw-semibold">
-                                    <i class="bi bi-building me-1"></i> Alamat Usaha
-                                </label>
+                            <div class="col-md-6 mb-3">
+                                <label for="alamat_usaha" class="form-label">Alamat Usaha</label>
                                 <div class="map-search-wrap">
-                                    <input type="text" id="search-usaha" class="form-control form-control-sm"
-                                        placeholder="Cari lokasi usaha...">
+                                    <input type="text" class="form-control form-control-sm" id="search-usaha"
+                                        placeholder="Cari lokasi usaha di peta..." autocomplete="off">
                                     <i class="bi bi-search map-search-icon"></i>
                                 </div>
                                 <div id="map-usaha" class="map-container"></div>
-                                <small class="text-muted d-block mb-1">
-                                    <i class="bi bi-info-circle me-1"></i>Klik peta atau cari lokasi — teks alamat terisi otomatis
-                                </small>
-                                <textarea name="alamat_usaha" id="alamat_usaha" rows="2"
-                                    class="form-control @error('alamat_usaha') is-invalid @enderror"
-                                    placeholder="Isi manual atau klik peta">{{ old('alamat_usaha') }}</textarea>
-                                <input type="hidden" name="lat_usaha" id="lat_usaha" value="{{ old('lat_usaha') }}">
-                                <input type="hidden" name="lng_usaha" id="lng_usaha" value="{{ old('lng_usaha') }}">
+                                <small class="text-muted d-block mb-1"><i class="bi bi-info-circle me-1"></i>Geser marker biru untuk menentukan titik koordinat usaha.</small>
+                                <textarea name="alamat_usaha" id="alamat_usaha" rows="3"
+                                    class="form-control @error('alamat_usaha') is-invalid @enderror">{{ old('alamat_usaha') }}</textarea>
                                 @error('alamat_usaha')
                                     <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                                <input type="hidden" name="lat_usaha" id="lat_usaha" value="{{ old('lat_usaha') }}">
+                                <input type="hidden" name="lng_usaha" id="lng_usaha" value="{{ old('lng_usaha') }}">
+                            </div>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <h6 class="text-primary mb-2"><i class="bi bi-exclamation-triangle-fill me-1"></i> Dokumen Wajib (Harus Diunggah)</h6>
+                        <p class="text-muted small mb-3">Format file yang diterima: <strong>PDF, JPG, JPEG, PNG</strong> (Maksimal 2MB per file).</p>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="ktp" class="form-label">KTP <span class="text-danger">*</span></label>
+                                <input type="file" name="ktp" id="ktp"
+                                    class="form-control @error('ktp') is-invalid @enderror"
+                                    accept=".pdf,.jpg,.jpeg,.png" {{ session('admin_calon_agen_drafts.ktp') ? '' : 'required' }}>
+                                @if (session('admin_calon_agen_drafts.ktp'))
+                                    <div class="alert alert-light-success py-1 px-2 mt-1 small">
+                                        <i class="bi bi-check-circle me-1"></i> File tersimpan: <strong>{{ session('admin_calon_agen_drafts.ktp.name') }}</strong> (Pilih file baru jika ingin mengganti)
+                                    </div>
+                                @endif
+                                <small class="text-muted mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
+                                @error('ktp')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label for="formulir_pendaftaran" class="form-label">Formulir Pendaftaran <span class="text-danger">*</span></label>
+                                <input type="file" name="formulir_pendaftaran" id="formulir_pendaftaran"
+                                    class="form-control @error('formulir_pendaftaran') is-invalid @enderror"
+                                    accept=".pdf,.jpg,.jpeg,.png" {{ session('admin_calon_agen_drafts.formulir_pendaftaran') ? '' : 'required' }}>
+                                @if (session('admin_calon_agen_drafts.formulir_pendaftaran'))
+                                    <div class="alert alert-light-success py-1 px-2 mt-1 small">
+                                        <i class="bi bi-check-circle me-1"></i> File tersimpan: <strong>{{ session('admin_calon_agen_drafts.formulir_pendaftaran.name') }}</strong> (Pilih file baru jika ingin mengganti)
+                                    </div>
+                                @endif
+                                <small class="text-muted mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
+                                @error('formulir_pendaftaran')
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
 
-                        <h6 class="text-muted mb-3 mt-2">Dokumen Administratif</h6>
-                        <div class="alert alert-light-info color-info py-2 px-3 mb-3" style="font-size: 0.85rem;">
-                            <i class="bi bi-info-circle me-1"></i>
-                            Format file yang diterima: <strong>PDF, JPG, JPEG, PNG</strong>. Ukuran maksimal: <strong>2MB</strong> per file.
-                        </div>
+                        <h6 class="text-secondary mt-3 mb-2"><i class="bi bi-file-earmark-check me-1"></i> Dokumen Opsional (Jika Ada)</h6>
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="ktp" class="form-label">KTP <span class="text-danger">*</span></label>
-                                <small class="text-danger d-block mb-1"><i class="bi bi-exclamation-circle me-1"></i>Wajib diunggah</small>
-                                <input type="file" name="ktp" id="ktp"
-                                    class="form-control @error('ktp') is-invalid @enderror"
-                                    accept=".pdf,.jpg,.jpeg,.png" required>
-                                <small class="text-muted mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
-                                @error('ktp')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="formulir_pendaftaran" class="form-label">Formulir Pendaftaran <span class="text-danger">*</span></label>
-                                <small class="text-danger d-block mb-1"><i class="bi bi-exclamation-circle me-1"></i>Wajib diunggah</small>
-                                <input type="file" name="formulir_pendaftaran" id="formulir_pendaftaran"
-                                    class="form-control @error('formulir_pendaftaran') is-invalid @enderror"
-                                    accept=".pdf,.jpg,.jpeg,.png" required>
-                                <small class="text-muted mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
-                                @error('formulir_pendaftaran')
-                                    <div class="invalid-feedback">{{ $message }}</div>
-                                @enderror
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="nib" class="form-label">NIB</label>
+                                <label for="nib" class="form-label">NIB (Nomor Induk Berusaha)</label>
                                 <input type="file" name="nib" id="nib"
                                     class="form-control @error('nib') is-invalid @enderror"
                                     accept=".pdf,.jpg,.jpeg,.png">
+                                @if (session('admin_calon_agen_drafts.nib'))
+                                    <div class="alert alert-light-success py-1 px-2 mt-1 small">
+                                        <i class="bi bi-check-circle me-1"></i> File tersimpan: <strong>{{ session('admin_calon_agen_drafts.nib.name') }}</strong> (Pilih file baru jika ingin mengganti)
+                                    </div>
+                                @endif
                                 <small class="text-muted mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
                                 @error('nib')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
+
                             <div class="col-md-6 mb-3">
                                 <label for="npwp" class="form-label">NPWP</label>
                                 <input type="file" name="npwp" id="npwp"
                                     class="form-control @error('npwp') is-invalid @enderror"
                                     accept=".pdf,.jpg,.jpeg,.png">
+                                @if (session('admin_calon_agen_drafts.npwp'))
+                                    <div class="alert alert-light-success py-1 px-2 mt-1 small">
+                                        <i class="bi bi-check-circle me-1"></i> File tersimpan: <strong>{{ session('admin_calon_agen_drafts.npwp.name') }}</strong> (Pilih file baru jika ingin mengganti)
+                                    </div>
+                                @endif
                                 <small class="text-muted mt-1 d-block">Format: PDF, JPG, JPEG, PNG. Maks. 2MB</small>
                                 @error('npwp')
-                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    <div class="invalid-feedback d-block">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-save"></i> Simpan
-                        </button>
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-1"></i> Simpan Calon Agen
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>

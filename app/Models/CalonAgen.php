@@ -34,6 +34,12 @@ class CalonAgen extends Model
         'formulir_pendaftaran_path',
         'form_screening_path',
         'status',
+        'sumber_pendaftaran',
+        'didaftarkan_oleh',
+        'status_verifikasi',
+        'catatan_verifikasi',
+        'diverifikasi_oleh',
+        'diverifikasi_at',
     ];
 
     protected $casts = [
@@ -43,6 +49,7 @@ class CalonAgen extends Model
         'lng_domisili'  => 'float',
         'lat_usaha'     => 'float',
         'lng_usaha'     => 'float',
+        'diverifikasi_at' => 'datetime',
     ];
 
 
@@ -61,10 +68,35 @@ class CalonAgen extends Model
         return $this->status === 'disurvey';
     }
 
+    public function isVerifikasiValid(): bool
+    {
+        return $this->status_verifikasi === 'valid';
+    }
+
+    public function isVerifikasiTidakValid(): bool
+    {
+        return $this->status_verifikasi === 'tidak_valid';
+    }
+
+    public function isVerifikasiMenunggu(): bool
+    {
+        return $this->status_verifikasi === 'menunggu';
+    }
+
     // Relasi
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function didaftarkanOleh(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'didaftarkan_oleh');
+    }
+
+    public function diverifikasiOleh(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'diverifikasi_oleh');
     }
 
     public function periode(): BelongsTo

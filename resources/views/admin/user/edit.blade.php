@@ -80,11 +80,11 @@
                                             <select class="form-select @error('role') is-invalid @enderror" id="role"
                                                 name="role" required {{ $user->id === 1 ? 'disabled' : '' }}>
                                                 <option value="admin"
-                                                    {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin
-                                                </option>
+                                                    {{ old('role', $user->role) === 'admin' ? 'selected' : '' }}>Admin Pengelola</option>
+                                                <option value="petugas_survey"
+                                                    {{ old('role', $user->role) === 'petugas_survey' ? 'selected' : '' }}>Petugas Survey</option>
                                                 <option value="calon_agen"
-                                                    {{ old('role', $user->role) === 'calon_agen' ? 'selected' : '' }}>Calon
-                                                    Agen</option>
+                                                    {{ old('role', $user->role) === 'calon_agen' ? 'selected' : '' }}>Calon Agen</option>
                                             </select>
                                             @if ($user->id === 1)
                                                 {{-- Kirim tetap value-nya walau disabled --}}

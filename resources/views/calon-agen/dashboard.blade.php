@@ -30,7 +30,7 @@
                 </div>
             @else
 
-                {{-- Alert Status --}}
+                {{-- Alert Status SPK --}}
                 @php
                     $alertClass = match($calonAgen->status) {
                         'diproses' => 'warning',
@@ -45,10 +45,10 @@
                         'belumdirekomendasi'  => 'x-circle-fill',
                     };
                     $alertPesan = match($calonAgen->status) {
-                        'diproses' => 'Pendaftaran Anda sedang dalam proses verifikasi oleh admin.',
-                        'disurvey' => 'Pendaftaran Anda sedang dalam tahap survey lapangan.',
-                        'direkomendasi' => 'Selamat! Pendaftaran Anda telah direkomendasi.',
-                        'belumdirekomendasi'  => 'Mohon maaf, pendaftaran Anda tidak dapat direkomendasi.',
+                        'diproses' => 'Pendaftaran Anda sedang dalam proses verifikasi dan seleksi oleh tim.',
+                        'disurvey' => 'Pendaftaran Anda sedang dalam tahap survey lapangan oleh petugas.',
+                        'direkomendasi' => 'Selamat! Anda dinyatakan direkomendasi menjadi Agen.',
+                        'belumdirekomendasi'  => 'Mohon maaf, pendaftaran Anda belum direkomendasi pada periode ini.',
                     };
                 @endphp
                 <div class="alert alert-light-{{ $alertClass }} color-{{ $alertClass }} mb-4">
@@ -58,14 +58,14 @@
 
                 @if (session('success'))
                     <div class="alert alert-light-success color-success alert-dismissible fade show" role="alert">
-                        {{ session('success') }}
+                        <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
 
                 @if (session('error'))
                     <div class="alert alert-light-danger color-danger alert-dismissible fade show" role="alert">
-                        {{ session('error') }}
+                        <i class="bi bi-exclamation-triangle me-2"></i>{{ session('error') }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 @endif
@@ -107,9 +107,12 @@
                                         </div>
                                     </div>
                                     <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Periode</h6>
+                                        <h6 class="text-muted font-semibold">Periode &amp; Kuota</h6>
                                         <h6 class="font-extrabold mb-0" style="font-size: 0.9rem">
                                             {{ $calonAgen->periode->nama_periode ?? '-' }}
+                                            @if ($calonAgen->periode && $calonAgen->periode->kuota)
+                                                ({{ $calonAgen->periode->kuota }} Kuota)
+                                            @endif
                                         </h6>
                                     </div>
                                 </div>
@@ -167,7 +170,7 @@
                             <div class="card-body">
                                 <table class="table table-borderless mb-0">
                                     <tr>
-                                        <th width="40%">NIK</th>
+                                        <th width="42%">NIK</th>
                                         <td>: {{ $calonAgen->nik }}</td>
                                     </tr>
                                     <tr>
@@ -195,11 +198,25 @@
                                         <td>: {{ $calonAgen->periode->nama_periode ?? '-' }}</td>
                                     </tr>
                                     <tr>
+                                        <th>Sumber Pendaftaran</th>
+                                        <td>: 
+                                            @if ($calonAgen->sumber_pendaftaran === 'admin')
+                                                <span class="badge bg-light-info text-info border">
+                                                    <i class="bi bi-person-gear me-1"></i> Didaftarkan Admin
+                                                </span>
+                                            @else
+                                                <span class="badge bg-light-primary text-primary border">
+                                                    <i class="bi bi-person me-1"></i> Mendaftar Mandiri
+                                                </span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <th>Tanggal Daftar</th>
                                         <td>: {{ $calonAgen->created_at->format('d/m/Y H:i') }}</td>
                                     </tr>
                                     <tr>
-                                        <th>Status</th>
+                                        <th>Status SPK</th>
                                         <td>:
                                             @php
                                                 $badge = match($calonAgen->status) {
@@ -219,16 +236,42 @@
                         </div>
 
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h4 class="card-title mb-0">Dokumen Pendaftaran</h4>
+                                @if ($calonAgen->status_verifikasi === 'valid')
+                                    <span class="badge bg-success"><i class="bi bi-check-circle me-1"></i> Valid</span>
+                                @elseif ($calonAgen->status_verifikasi === 'tidak_valid')
+                                    <span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i> Perlu Perbaikan</span>
+                                @else
+                                    <span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i> Menunggu Verifikasi</span>
+                                @endif
                             </div>
                             <div class="card-body">
+                                {{-- Status Verifikasi Alert --}}
+                                @if ($calonAgen->status_verifikasi === 'valid')
+                                    <div class="alert alert-light-success border border-success color-success py-2 px-3 mb-3 small">
+                                        <i class="bi bi-check-circle-fill me-1"></i>
+                                        <strong>Dokumen Administrasi Valid:</strong> Semua berkas Anda telah diverifikasi valid oleh admin.
+                                    </div>
+                                @elseif ($calonAgen->status_verifikasi === 'tidak_valid')
+                                    <div class="alert alert-light-danger border border-danger color-danger py-2 px-3 mb-3 small">
+                                        <i class="bi bi-exclamation-octagon-fill me-1"></i>
+                                        <strong>Perlu Perbaikan Dokumen:</strong>
+                                        <div class="mt-1">{{ $calonAgen->catatan_verifikasi ?? 'Silakan upload ulang berkas dokumen yang belum sesuai.' }}</div>
+                                    </div>
+                                @else
+                                    <div class="alert alert-light-warning border border-warning color-warning py-2 px-3 mb-3 small">
+                                        <i class="bi bi-hourglass-split me-1"></i>
+                                        <strong>Menunggu Verifikasi:</strong> Berkas dokumen sedang dalam antrean verifikasi admin. Anda masih dapat memperbaiki dokumen sebelum disetujui.
+                                    </div>
+                                @endif
+
                                 @php
                                     $dokumenList = [
-                                        'KTP' => $calonAgen->ktp_path,
-                                        'NIB' => $calonAgen->nib_path,
-                                        'NPWP' => $calonAgen->npwp_path,
-                                        'Formulir Pendaftaran' => $calonAgen->formulir_pendaftaran_path,
+                                        'KTP (Wajib)'                  => $calonAgen->ktp_path,
+                                        'Formulir Pendaftaran (Wajib)' => $calonAgen->formulir_pendaftaran_path,
+                                        'NIB (Opsional)'               => $calonAgen->nib_path,
+                                        'NPWP (Opsional)'              => $calonAgen->npwp_path,
                                     ];
                                 @endphp
                                 <div class="list-group mb-4">
@@ -238,7 +281,7 @@
                                             @if ($path)
                                                 <a href="{{ asset('storage/' . $path) }}" target="_blank"
                                                     class="btn btn-sm btn-outline-primary">
-                                                    <i class="bi bi-file-earmark-text"></i> Lihat
+                                                    <i class="bi bi-file-earmark-text"></i> Lihat Berkas
                                                 </a>
                                             @else
                                                 <span class="badge bg-light-secondary">Belum ada</span>
@@ -247,31 +290,69 @@
                                     @endforeach
                                 </div>
 
-                                <form method="POST" action="{{ route('calon-agen.dokumen.update') }}" enctype="multipart/form-data">
-                                    @csrf
-                                    @method('PATCH')
-                                    <div class="mb-3">
-                                        <label for="nib" class="form-label">Unggah Ulang NIB</label>
-                                        <input type="file" name="nib" id="nib"
-                                            class="form-control @error('nib') is-invalid @enderror"
-                                            accept=".pdf,.jpg,.jpeg,.png">
-                                        @error('nib')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                @if ($calonAgen->status_verifikasi !== 'valid')
+                                    <div class="card bg-light border shadow-none">
+                                        <div class="card-body p-3">
+                                            <h6 class="fw-semibold mb-2"><i class="bi bi-pencil-square me-1"></i> Perbarui / Unggah Berkas Dokumen</h6>
+                                            <small class="text-muted d-block mb-3">Pilih berkas baru yang ingin Anda perbaiki. Berkas lama tetap tersimpan jika tidak diubah.</small>
+
+                                            <form method="POST" action="{{ route('calon-agen.dokumen.update') }}" enctype="multipart/form-data">
+                                                @csrf
+                                                @method('PATCH')
+
+                                                <p class="text-primary fw-semibold small mb-2"><i class="bi bi-check2-circle me-1"></i> Dokumen Wajib</p>
+                                                <div class="mb-3">
+                                                    <label for="ktp" class="form-label small fw-semibold">Unggah Ulang KTP</label>
+                                                    <input type="file" name="ktp" id="ktp"
+                                                        class="form-control form-control-sm @error('ktp') is-invalid @enderror"
+                                                        accept=".pdf,.jpg,.jpeg,.png">
+                                                    @error('ktp')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+
+                                                <div class="mb-3">
+                                                    <label for="formulir_pendaftaran" class="form-label small fw-semibold">Unggah Ulang Formulir Pendaftaran</label>
+                                                    <input type="file" name="formulir_pendaftaran" id="formulir_pendaftaran"
+                                                        class="form-control form-control-sm @error('formulir_pendaftaran') is-invalid @enderror"
+                                                        accept=".pdf,.jpg,.jpeg,.png">
+                                                    @error('formulir_pendaftaran')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+
+                                                <hr class="my-3">
+
+                                                <p class="text-secondary fw-semibold small mb-2"><i class="bi bi-files me-1"></i> Dokumen Opsional</p>
+                                                <div class="mb-3">
+                                                    <label for="nib" class="form-label small fw-semibold">Unggah / Perbarui NIB</label>
+                                                    <input type="file" name="nib" id="nib"
+                                                        class="form-control form-control-sm @error('nib') is-invalid @enderror"
+                                                        accept=".pdf,.jpg,.jpeg,.png">
+                                                    @error('nib')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="npwp" class="form-label small fw-semibold">Unggah / Perbarui NPWP</label>
+                                                    <input type="file" name="npwp" id="npwp"
+                                                        class="form-control form-control-sm @error('npwp') is-invalid @enderror"
+                                                        accept=".pdf,.jpg,.jpeg,.png">
+                                                    @error('npwp')
+                                                        <div class="invalid-feedback">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                    <i class="bi bi-cloud-arrow-up me-1"></i> Simpan Perubahan Dokumen
+                                                </button>
+                                            </form>
+                                        </div>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="npwp" class="form-label">Unggah Ulang NPWP</label>
-                                        <input type="file" name="npwp" id="npwp"
-                                            class="form-control @error('npwp') is-invalid @enderror"
-                                            accept=".pdf,.jpg,.jpeg,.png">
-                                        @error('npwp')
-                                            <div class="invalid-feedback">{{ $message }}</div>
-                                        @enderror
+                                @else
+                                    <div class="text-center py-2 text-success small">
+                                        <i class="bi bi-lock-fill me-1"></i> Dokumen sudah terverifikasi valid dan terkunci.
                                     </div>
-                                    <button type="submit" class="btn btn-primary btn-sm">
-                                        <i class="bi bi-upload"></i> Perbarui Dokumen
-                                    </button>
-                                </form>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -339,7 +420,7 @@
                                                         <tr>
                                                             <th>Kriteria</th>
                                                             <th class="text-center">Nilai</th>
-                                                            <th>Catatan Admin</th>
+                                                            <th>Catatan Surveyor</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -377,7 +458,7 @@
                                         @else
                                             <div class="text-center py-3 text-muted">
                                                 <i class="bi bi-clipboard2 fs-1 d-block mb-2"></i>
-                                                Belum ada penilaian dari admin.
+                                                Belum ada penilaian dari surveyor.
                                             </div>
                                         @endif
                                     </div>

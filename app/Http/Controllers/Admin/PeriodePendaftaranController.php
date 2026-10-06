@@ -38,12 +38,16 @@ class PeriodePendaftaranController extends Controller
             'nama_periode'  => ['required', 'string', 'max:255'],
             'tanggal_buka'  => ['required', 'date'],
             'tanggal_tutup' => ['required', 'date', 'after:tanggal_buka'],
+            'kuota'         => ['required', 'integer', 'min:1'],
             'status'        => ['required', Rule::in(['draft', 'aktif', 'ditutup'])],
         ], [
             'nama_periode.required'  => 'Nama periode wajib diisi.',
             'tanggal_buka.required'  => 'Tanggal buka wajib diisi.',
             'tanggal_tutup.required' => 'Tanggal tutup wajib diisi.',
             'tanggal_tutup.after'    => 'Tanggal tutup harus setelah tanggal buka.',
+            'kuota.required'         => 'Jumlah kuota periode wajib diisi.',
+            'kuota.integer'          => 'Jumlah kuota harus berupa angka.',
+            'kuota.min'              => 'Jumlah kuota minimal 1.',
             'status.required'        => 'Status wajib dipilih.',
             'status.in'              => 'Status tidak valid.',
         ]);
@@ -95,12 +99,16 @@ class PeriodePendaftaranController extends Controller
             'nama_periode'  => ['required', 'string', 'max:255'],
             'tanggal_buka'  => ['required', 'date'],
             'tanggal_tutup' => ['required', 'date', 'after:tanggal_buka'],
+            'kuota'         => ['required', 'integer', 'min:1'],
             'status'        => ['required', Rule::in(['draft', 'aktif', 'ditutup'])],
         ], [
             'nama_periode.required'  => 'Nama periode wajib diisi.',
             'tanggal_buka.required'  => 'Tanggal buka wajib diisi.',
             'tanggal_tutup.required' => 'Tanggal tutup wajib diisi.',
             'tanggal_tutup.after'    => 'Tanggal tutup harus setelah tanggal buka.',
+            'kuota.required'         => 'Jumlah kuota periode wajib diisi.',
+            'kuota.integer'          => 'Jumlah kuota harus berupa angka.',
+            'kuota.min'              => 'Jumlah kuota minimal 1.',
             'status.required'        => 'Status wajib dipilih.',
             'status.in'              => 'Status tidak valid.',
         ]);
